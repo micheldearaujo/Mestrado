@@ -1,3 +1,5 @@
+
+# Importando as bibliotecas necessarias
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.image import imread

@@ -11,6 +11,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential, save_model
 from tensorflow.keras.layers import Dense, Conv2D, MaxPooling2D, Flatten, Dropout
 from tensorflow.keras.optimizers import SGD
+from tensorflow.keras.callbacks import EarlyStopping
 import time
 from datetime import timedelta
 
@@ -80,6 +81,7 @@ def define_model(in_shape=(128,128,3), out_shape=17):
     modelo.add(Dense(out_shape, activation='sigmoid'))
     # Compilando
     opt = SGD(lr=0.01, momentum=0.9)
+    early_stop = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=25)
     modelo.compile(optimizer=opt, loss='binary_crossentropy', metrics=[fbeta])
     return modelo
 
@@ -117,7 +119,7 @@ def run():
     # Aplicando os iteradores
     train_it = train_datagen.flow(Xtr, ytr, batch_size=128)
     test_it = test_datagen.flow(Xte, yte, batch_size=128)
-    #Definindo o modelo
+    # Definindo o modelo
     modelo = define_model()
     # Fitando
     modelohis = modelo.fit_generator(train_it,
@@ -125,7 +127,7 @@ def run():
                                      validation_data=test_it,
                                      validation_steps=len(test_it),
                                      epochs=200,
-                                     verbose=1)
+                                     verbose=1, callbacks=[early_stop])
     # Avaliando o modelo
     loss, fbeta = modelo.evaluate_generator(test_it,
                                             steps=len(test_it),
@@ -139,6 +141,8 @@ def run():
 
 run()
 end_time = time.monotonic()
+print('Tempo do treinamento: ')
+print('\n')
 print(timedelta(seconds=end_time - start_time))
 
 # Salvando o modelo para futuras previsoes
