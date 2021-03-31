@@ -25,9 +25,9 @@ train_fnames = os.listdir(train_dir)
 test_fnames = os.listdir(test_dir)
 
 # Carregamento dos dados já criamos no 'create_dataset.py'
-def load_dataset():
+def load_dataset(dataset_name):
     # Carregando
-    data = np.load(base_dir + '/amazon_data.npz')
+    data = np.load(base_dir + '/'+ dataset_name)
     X, y = data['arr_0'], data['arr_1']
     # Separando os sets de training e testing
     Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, random_state=1)
@@ -61,22 +61,22 @@ def fbeta(y_true, y_pred, beta=2):
 
 
 # Criando o modelo de CNN // usaremos o block VGG
-def define_model(in_shape=(128,128,3), out_shape=17):
+def define_model(in_shape=targ_shape, out_shape=17):
     modelo = Sequential()
-    modelo.add(Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same', input_shape=in_shape))
+    modelo.add(Conv2D(8, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same', input_shape=targ_shape))
+    modelo.add(Conv2D(8, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+    modelo.add(MaxPooling2D((2, 2)))
+    modelo.add(Dropout(0.2))
+    modelo.add(Conv2D(16, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+    modelo.add(Conv2D(16, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+    modelo.add(MaxPooling2D((2, 2)))
+    modelo.add(Dropout(0.2))
+    modelo.add(Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
     modelo.add(Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
     modelo.add(MaxPooling2D((2, 2)))
     modelo.add(Dropout(0.2))
-    modelo.add(Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
-    modelo.add(Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
-    modelo.add(MaxPooling2D((2, 2)))
-    modelo.add(Dropout(0.2))
-    modelo.add(Conv2D(128, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
-    modelo.add(Conv2D(128, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
-    modelo.add(MaxPooling2D((2, 2)))
-    modelo.add(Dropout(0.2))
     modelo.add(Flatten())
-    modelo.add(Dense(128, activation='relu', kernel_initializer='he_uniform'))
+    modelo.add(Dense(32, activation='relu', kernel_initializer='he_uniform'))
     modelo.add(Dropout(0.5))
     modelo.add(Dense(out_shape, activation='sigmoid'))
     # Compilando
@@ -106,19 +106,24 @@ def resumo(modelohis):
     plt.close()
 
 
-# Rodando o modelo
+# Executando o modelo
 def run():
     # Load
     Xtr, Xte, ytr, yte = load_dataset()
-    # Criando os geradores de data
+    # Criando o data augmentar, para aumentar a quantidade de imagens
     train_datagen = ImageDataGenerator(rescale=1.0/255.0,
                                        horizontal_flip=True,
                                        vertical_flip=True,
                                        rotation_range=90)
+    # As imagens de teste apenas são reescaladas
     test_datagen = ImageDataGenerator(rescale=1.0/255.0)
     # Aplicando os iteradores
-    train_it = train_datagen.flow(Xtr, ytr, batch_size=128)
-    test_it = test_datagen.flow(Xte, yte, batch_size=128)
+    # É aqui que criamos de fato os arrays que serão alimentados
+    # nos modelos
+    # Temos os arrays separados, Xtr..., e vamos aplicar o datagen
+    # nestes arrays, e os iteradores se tornam os novos Xtr e ytr
+    train_it = train_datagen.flow(Xtr, ytr, batch_size=targ_shape[0])
+    test_it = test_datagen.flow(Xte, yte, batch_size=targ_shape[0])
     # Definindo o modelo
     modelo = define_model()
     # Fitando
@@ -137,13 +142,18 @@ def run():
     resumo(modelo)
 
 
-# Por fim, rodando o modelo
 
+# Definindo qual é o dataset que usaremos
+targ_shape = (32,32,3)
+dataset_name = 'amazon_data_32.npz'
+# Por fim, rodando o modelo
 run()
 end_time = time.monotonic()
 print('Tempo do treinamento: ')
 print('\n')
 print(timedelta(seconds=end_time - start_time))
 
+# Definindo o nome do modelo
+model_name = 'CNN1_CDA_32.h5'
 # Salvando o modelo para futuras previsoes
-modelo.save_model('CNN1_CDA.h5')
+modelo.save_model(model_name)
