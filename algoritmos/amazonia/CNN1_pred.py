@@ -1,0 +1,2 @@
+# Prevendo novas imagens
+
