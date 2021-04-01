@@ -24,9 +24,11 @@ test_dir = os.path.join(base_dir, 'test-jpg')
 train_fnames = os.listdir(train_dir)
 test_fnames = os.listdir(test_dir)
 
-# Definindo qual é o dataset que usaremos
-targ_shape = (32,32,3)
-dataset_name = 'amazon_data_32.npz'
+# Definindo qual é o dataset que usaremos e qual o optimizer
+targ_shape = (16,16,3)
+dataset_name = 'amazon_data_16.npz'
+#opt = SGD(lr=0.01, momentum=0.9)
+opt = 'adam'
 
 # Carregamento dos dados que ja criamos no 'create_dataset.py'
 def load_dataset(dataset_name):
@@ -68,12 +70,12 @@ def fbeta(y_true, y_pred, beta=2):
 # Três blocos constituidos por duas convoluções com filtro 3x3, um max pooling 2x2 e um dropout.
 def define_model(in_shape=targ_shape, out_shape=17):
     modelo = Sequential()
-    modelo.add(Conv2D(targ_shape[0]/4, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same', input_shape=targ_shape))
-    modelo.add(Conv2D(targ_shape[0]/4, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+    modelo.add(Conv2D(int(targ_shape[0]/4), (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same', input_shape=targ_shape))
+    modelo.add(Conv2D(int(targ_shape[0]/4), (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
     modelo.add(MaxPooling2D((2, 2)))
     modelo.add(Dropout(0.2))
-    modelo.add(Conv2D(targ_shape[0]/2, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
-    modelo.add(Conv2D(targ_shape[0]/2, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+    modelo.add(Conv2D(int(targ_shape[0]/2), (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+    modelo.add(Conv2D(int(targ_shape[0]/2), (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
     modelo.add(MaxPooling2D((2, 2)))
     modelo.add(Dropout(0.2))
     modelo.add(Conv2D(targ_shape[0], (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
@@ -85,7 +87,6 @@ def define_model(in_shape=targ_shape, out_shape=17):
     modelo.add(Dropout(0.5))
     modelo.add(Dense(out_shape, activation='sigmoid'))
     # Compilando
-    opt = SGD(lr=0.01, momentum=0.9)
     modelo.compile(optimizer=opt, loss='binary_crossentropy', metrics=[fbeta])
     return modelo
 
@@ -146,7 +147,7 @@ def run():
     print('> loss=%.3f, fbeta=%.3f'%(loss, fbeta))
     #resultados = ['Loss: ', loss,'Fbeta: ', fbeta, 'Val_loss: ', val_loss, 'Val_Fbeta: ', fbeta_loss]
     # Definindo o nome do modelo
-    model_name = 'CNN1_CDA_32_SGD.h5'
+    model_name = 'CNN1_CDA_16_adam.h5'
     # Salvando o modelo para futuras previsoes
     modelo.save(base_dir+'/'+model_name)
     # Plotando as curvas de aprendizado
