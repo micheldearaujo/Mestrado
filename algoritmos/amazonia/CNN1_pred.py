@@ -19,5 +19,5 @@ test_dir = os.path.join(base_dir, 'test-jpg')
 train_fnames = os.listdir(train_dir)
 test_fnames = os.listdir(test_dir)
 
-model_name = 'CNN1_CDA_32_SGD.h5'
-modelohis = load_model(base_dir+'/'+model_name)
+model_name = 'CNN1_CDA_8_adam.h5'
+modelohis = load_model(base_dir+'/'+model_name, compile=False)

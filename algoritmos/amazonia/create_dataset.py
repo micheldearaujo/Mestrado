@@ -105,9 +105,9 @@ def load_dataset(path, file_mapping, tag_mapping,targ_size=(128,128)):
 # definindo o nome do csv
 filename='train_classes.csv'
 # Definindo o nome dos dados a serem salvos
-dataset_name = 'amazon_data_32.npz'
+dataset_name = 'amazon_data_8.npz'
 # Definindo o tamanho das imagens
-targ_size = (32,32)
+targ_size = (8,8)
 # Criando o dataframe com as tags das imagens
 mapping_csv = pd.read_csv(base_dir + '/' +filename)
 # Criando o dicionário com as tags strings para numeros

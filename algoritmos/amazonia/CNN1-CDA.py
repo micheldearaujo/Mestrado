@@ -26,8 +26,8 @@ train_fnames = os.listdir(train_dir)
 test_fnames = os.listdir(test_dir)
 
 # Definindo qual é o dataset que usaremos e qual o optimizer
-targ_shape = (16,16,3)
-dataset_name = 'amazon_data_16.npz'
+targ_shape = (8,8,3)
+dataset_name = 'amazon_data_8.npz'
 #opt = SGD(lr=0.01, momentum=0.9)
 opt = 'adam'
 
@@ -109,7 +109,7 @@ def resumo(modelohis):
     # Salvando o gráfico
     filename = sys.argv[0].split('/')[-1]
     plt.tight_layout()
-    plt.savefig(base_dir+'/'+filename + '_plot_32_SGD.png')
+    plt.savefig(base_dir+'/'+filename + '_plot_8_adam.png')
     plt.close()
 
 
@@ -148,7 +148,7 @@ def run():
     print('> loss=%.3f, fbeta=%.3f'%(loss, fbeta))
     #resultados = ['Loss: ', loss,'Fbeta: ', fbeta, 'Val_loss: ', val_loss, 'Val_Fbeta: ', fbeta_loss]
     # Definindo o nome do modelo
-    model_name = 'CNN1_CDA_16_adam.h5'
+    model_name = 'CNN1_CDA_8_adam_.h5'
     # Salvando o modelo para futuras previsoes
     modelo.save(base_dir+'/'+model_name)
     # Plotando as curvas de aprendizado
