@@ -24,6 +24,10 @@ test_dir = os.path.join(base_dir, 'test-jpg')
 train_fnames = os.listdir(train_dir)
 test_fnames = os.listdir(test_dir)
 
+# Definindo qual é o dataset que usaremos
+targ_shape = (32,32,3)
+dataset_name = 'amazon_data_32.npz'
+
 # Carregamento dos dados já criamos no 'create_dataset.py'
 def load_dataset(dataset_name):
     # Carregando
@@ -34,11 +38,11 @@ def load_dataset(dataset_name):
     print('As dimensões dos vetores são: \n')
     print('Xtr: ', Xtr.shape)
     print('\n')
-    print('ytr: ', Xtr.shape)
+    print('ytr: ', ytr.shape)
     print('\n')
-    print('Xte: ', Xtr.shape)
+    print('Xte: ', Xte.shape)
     print('\n')
-    print('yte: ', Xtr.shape)
+    print('yte: ', yte.shape)
     print('\n')
     return Xtr, Xte, ytr, yte
 
@@ -81,7 +85,6 @@ def define_model(in_shape=targ_shape, out_shape=17):
     modelo.add(Dense(out_shape, activation='sigmoid'))
     # Compilando
     opt = SGD(lr=0.01, momentum=0.9)
-    early_stop = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=25)
     modelo.compile(optimizer=opt, loss='binary_crossentropy', metrics=[fbeta])
     return modelo
 
@@ -102,14 +105,15 @@ def resumo(modelohis):
     plt.legend()
     # Salvando o gráfico
     filename = sys.argv[0].split('/')[-1]
-    plt.savefig(filename + '_plot2.png')
+    plt.tight_layout()
+    plt.savefig(base_dir+'/'+filename + '_plot2.png')
     plt.close()
 
 
 # Executando o modelo
 def run():
     # Load
-    Xtr, Xte, ytr, yte = load_dataset()
+    Xtr, Xte, ytr, yte = load_dataset(dataset_name)
     # Criando o data augmentar, para aumentar a quantidade de imagens
     train_datagen = ImageDataGenerator(rescale=1.0/255.0,
                                        horizontal_flip=True,
@@ -127,25 +131,29 @@ def run():
     # Definindo o modelo
     modelo = define_model()
     # Fitando
-    modelohis = modelo.fit_generator(train_it,
+    early_stop = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=25)
+    modelohis = modelo.fit(train_it,
                                      steps_per_epoch=len(train_it),
                                      validation_data=test_it,
                                      validation_steps=len(test_it),
                                      epochs=200,
                                      verbose=1, callbacks=[early_stop])
     # Avaliando o modelo
-    loss, fbeta = modelo.evaluate_generator(test_it,
+    loss, fbeta = modelo.evaluate(test_it,
                                             steps=len(test_it),
                                             verbose=1)
     print('> loss=%.3f, fbeta=%.3f'%(loss, fbeta))
+    #resultados = ['Loss: ', loss,'Fbeta: ', fbeta, 'Val_loss: ', val_loss, 'Val_Fbeta: ', fbeta_loss]
+    # Definindo o nome do modelo
+    model_name = 'CNN1_CDA_32_SGD.h5'
+    # Salvando o modelo para futuras previsoes
+    modelo.save(base_dir+'/'+model_name)
     # Plotando as curvas de aprendizado
-    resumo(modelo)
+    resumo(modelohis)
 
 
 
-# Definindo qual é o dataset que usaremos
-targ_shape = (32,32,3)
-dataset_name = 'amazon_data_32.npz'
+
 # Por fim, rodando o modelo
 run()
 end_time = time.monotonic()
@@ -153,7 +161,3 @@ print('Tempo do treinamento: ')
 print('\n')
 print(timedelta(seconds=end_time - start_time))
 
-# Definindo o nome do modelo
-model_name = 'CNN1_CDA_32.h5'
-# Salvando o modelo para futuras previsoes
-modelo.save_model(model_name)
