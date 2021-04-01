@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from tensorflow.keras import backend
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.models import Sequential, save_model
+from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import Dense, Conv2D, MaxPooling2D, Flatten, Dropout
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.callbacks import EarlyStopping
@@ -28,7 +28,7 @@ test_fnames = os.listdir(test_dir)
 targ_shape = (32,32,3)
 dataset_name = 'amazon_data_32.npz'
 
-# Carregamento dos dados já criamos no 'create_dataset.py'
+# Carregamento dos dados que ja criamos no 'create_dataset.py'
 def load_dataset(dataset_name):
     # Carregando
     data = np.load(base_dir + '/'+ dataset_name)
@@ -65,18 +65,19 @@ def fbeta(y_true, y_pred, beta=2):
 
 
 # Criando o modelo de CNN // usaremos o block VGG
+# Três blocos constituidos por duas convoluções com filtro 3x3, um max pooling 2x2 e um dropout.
 def define_model(in_shape=targ_shape, out_shape=17):
     modelo = Sequential()
-    modelo.add(Conv2D(8, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same', input_shape=targ_shape))
-    modelo.add(Conv2D(8, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+    modelo.add(Conv2D(targ_shape[0]/4, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same', input_shape=targ_shape))
+    modelo.add(Conv2D(targ_shape[0]/4, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
     modelo.add(MaxPooling2D((2, 2)))
     modelo.add(Dropout(0.2))
-    modelo.add(Conv2D(16, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
-    modelo.add(Conv2D(16, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+    modelo.add(Conv2D(targ_shape[0]/2, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+    modelo.add(Conv2D(targ_shape[0]/2, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
     modelo.add(MaxPooling2D((2, 2)))
     modelo.add(Dropout(0.2))
-    modelo.add(Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
-    modelo.add(Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+    modelo.add(Conv2D(targ_shape[0], (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+    modelo.add(Conv2D(targ_shape[0], (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
     modelo.add(MaxPooling2D((2, 2)))
     modelo.add(Dropout(0.2))
     modelo.add(Flatten())
@@ -106,7 +107,7 @@ def resumo(modelohis):
     # Salvando o gráfico
     filename = sys.argv[0].split('/')[-1]
     plt.tight_layout()
-    plt.savefig(base_dir+'/'+filename + '_plot2.png')
+    plt.savefig(base_dir+'/'+filename + '_plot_32_SGD.png')
     plt.close()
 
 
@@ -114,7 +115,7 @@ def resumo(modelohis):
 def run():
     # Load
     Xtr, Xte, ytr, yte = load_dataset(dataset_name)
-    # Criando o data augmentar, para aumentar a quantidade de imagens
+    # Criando o data augmentation, para aumentar a quantidade de imagens
     train_datagen = ImageDataGenerator(rescale=1.0/255.0,
                                        horizontal_flip=True,
                                        vertical_flip=True,
