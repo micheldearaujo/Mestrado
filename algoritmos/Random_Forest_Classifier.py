@@ -1,13 +1,18 @@
+# K Means Clustering é um algoritmo não supervisionado de machine learning que
+# agrupa grupo de dados similares.
+# Vamos rodar o dataset da amazonia pra ver o que acontece
+
 import numpy as np
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
-import os
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import f1_score
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from sklearn.model_selection import train_test_split
 import time
 from datetime import timedelta
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler, MultiLabelBinarizer, StandardScaler
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import confusion_matrix as cm, classification_report as cr, f1_score
+import joblib
 
 start_time = time.monotonic()
 # Definindo o caminho dos diretorios
@@ -18,11 +23,10 @@ train_fnames = os.listdir(train_dir)
 test_fnames = os.listdir(test_dir)
 
 # Definindo os parametros
-targ_shape = (16,16)
+targ_shape = (64,64)
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 
-
-# Para carregar os dados
+# Importando os dados
 def load_dataset():
     data = np.load(base_dir+'/'+dataset_name)
     X, y = data['arr_0'], data['arr_1']
@@ -37,40 +41,19 @@ def load_dataset():
     Xte = Xte[6072:, :]
     yte = yte[6072:]
     # Normalizando os dados entre 0 e 1
-    scaler = StandardScaler()
+    scaler = MinMaxScaler()
     Xtr = scaler.fit_transform(Xtr)
     Xval = scaler.fit_transform(Xval)
     Xte = scaler.fit_transform(Xte)
     return Xtr, Xte, Xval, ytr, yte, yval
 
 def evaluation(x, true):
-    ypred = knn.predict(x)
+    ypred = rfc.predict(x)
     return f1_score(true, ypred, average='samples')
 
-# Criando o modelo
-
 Xtr, Xte, Xval, ytr, yte, yval = load_dataset()
-
-# error_rate = []
-# Escolhendo o melhor k
-# for i in range(1, 41):
-#     print('loop %s' % i)
-#     knn = KNeighborsClassifier(n_neighbors=i)
-#     knn.fit(Xtr, ytr)
-#     pred_i = knn.predict(Xval)
-#     error_rate.append(np.mean(pred_i != yval))
-# plt.figure(figsize=(10, 6))
-# plt.plot(range(1, 41), error_rate, color='blue', linestyle='dashed', marker='o',
-#          markerfacecolor='red', markersize=10)
-# plt.title('Error Rate vs. K Value')
-# plt.xlabel('K')
-# plt.ylabel('Error Rate')
-# plt.show()
-
-knn = KNeighborsClassifier(n_neighbors=19)
-knn.fit(Xtr, ytr)
-
-# Realizando previsoes e avaliando a validação
+rfc= RandomForestClassifier(n_estimators=100, verbose=1)
+rfc.fit(Xtr, ytr)
 # Validation set
 prev_val = evaluation(Xval, yval)
 # Test set
@@ -83,3 +66,7 @@ print(timedelta(seconds=end_time - start_time))
 print('Amazon Dataset: ', targ_shape)
 print('F1_score_validation: ', prev_val)
 print('F1_score_test: ', prev_te)
+
+# Salvando o modelo
+filename = 'RFC_%s'%targ_shape[0]
+joblib.dump(rfc, base_dir+'/'+filename)
