@@ -28,8 +28,8 @@ test_fnames = os.listdir(test_dir)
 # Definindo qual é o dataset que usaremos e qual o optimizer
 targ_shape = (8,8,3)
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
-#opt = SGD(lr=0.01, momentum=0.9)
-opt = 'adam'
+opt = SGD(lr=0.01, momentum=0.9)
+#opt = 'adam'
 
 # Carregamento dos dados que ja criamos no 'create_dataset.py'
 def load_dataset(dataset_name):
@@ -148,7 +148,7 @@ def run():
     print('> loss=%.3f, fbeta=%.3f'%(loss, fbeta))
     #resultados = ['Loss: ', loss,'Fbeta: ', fbeta, 'Val_loss: ', val_loss, 'Val_Fbeta: ', fbeta_loss]
     # Definindo o nome do modelo
-    model_name = 'CNN1_CDA_%s_adam_.h5'%(targ_shape[0]
+    model_name = 'CNN1_CDA_%s_adam_.h5'%(targ_shape[0])
     # Salvando o modelo para futuras previsoes
     modelo.save(base_dir+'/'+model_name)
     # Plotando as curvas de aprendizado

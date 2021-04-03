@@ -5,9 +5,9 @@ import os
 import time
 from datetime import timedelta
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler, MultiLabelBinarizer
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import confusion_matrix as cm, classification_report as cr
+from sklearn.metrics import confusion_matrix as cm, classification_report as cr, f1_score
 
 start_time = time.monotonic()
 # Definindo o caminho dos diretorios
@@ -18,7 +18,7 @@ train_fnames = os.listdir(train_dir)
 test_fnames = os.listdir(test_dir)
 
 # Definindo os parametros
-targ_shape = (8,8)
+targ_shape = (128,128)
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 
 
@@ -44,36 +44,45 @@ def load_dataset():
     return Xtr, Xte, Xval, ytr, yte, yval
 
 # Criando o modelo
-def create_model():
-    # Criando a instancia e fitando
-    knnmodel = KneighborsClassifier(n_neighbors=1)
-    knnmodel.fit(Xtr, ytr)
-    # Escolhendo o melhor k
-    # error_rate = []
-    # for i in range(1, 40):
-    #     print('loop %s' % i)
-    #     knn = KNeighborsClassifier(n_neighbors=i)
-    #     knn.fit(Xtr, ytr)
-    #     pred_i = knn.predict(Xval)
-    #     error_rate.append(np.mean(pred_i != yval))
-
-# Realizando previsoes e avaliando a validação
-def evaluation(prev):
-    ypred = knnmodel.predict(prev)
-    print('Classification Report: ')
-    print(cr(prev, yte))
-    print('Confusion Matrix: ')
-    print(cm(prev, yte))
-    return prev
-
 
 Xtr, Xte, Xval, ytr, yte, yval = load_dataset()
-create_model()
+knnmodel = KNeighborsClassifier(n_neighbors=1)
+knnmodel.fit(Xtr, ytr)
+#
+error_rate = []
+# Escolhendo o melhor k
+# for i in range(1, 41):
+#     print('loop %s' % i)
+#     knn = KNeighborsClassifier(n_neighbors=i)
+#     knn.fit(Xtr, ytr)
+#     pred_i = knn.predict(Xval)
+#     error_rate.append(np.mean(pred_i != yval))
+# plt.figure(figsize=(10, 6))
+# plt.plot(range(1, 41), error_rate, color='blue', linestyle='dashed', marker='o',
+#          markerfacecolor='red', markersize=10)
+# plt.title('Error Rate vs. K Value')
+# plt.xlabel('K')
+# plt.ylabel('Error Rate')
+# plt.show()
+
+knn = KNeighborsClassifier(n_neighbors=19)
+knn.fit(Xtr, ytr)
+
+# Realizando previsoes e avaliando a validação
+def evaluation(x, true):
+    ypred = knn.predict(x)
+    return f1_score(true, ypred, average='samples')
+
+
 # Validation set
-prev_val = evaluation(Xval)
+prev_val = evaluation(Xval, yval)
 # Test set
-prev_te = evaluation(Xte)
+prev_te = evaluation(Xte, yte)
+
 end_time = time.monotonic()
 print('Tempo do treinamento: ')
 print('\n')
 print(timedelta(seconds=end_time - start_time))
+print('Amazon Dataset: ', targ_shape)
+print('F1_score_validation: ', prev_val)
+print('F1_score_test: ', prev_te)

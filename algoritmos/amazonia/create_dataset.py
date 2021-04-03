@@ -25,9 +25,8 @@ def plot_imagens():
         image = imread(filename)
         plt.imshow(image)
     plt.show()
-plot_imagens()
-sleep(5)
-plt.close()
+#plot_imagens()
+
 # Criando mapas
 # Como vimos, as figuras não estão legendadas (no nome ou por pastas, por exemplo). Em vez disso,
 # temos um arquivo csv separado com nomes das images e o respectivo label. Dessa forma, precisamos
