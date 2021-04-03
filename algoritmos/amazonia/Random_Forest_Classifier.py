@@ -23,7 +23,7 @@ train_fnames = os.listdir(train_dir)
 test_fnames = os.listdir(test_dir)
 
 # Definindo os parametros
-targ_shape = (32,32)
+targ_shape = (64,64)
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 
 # Importando os dados
@@ -68,5 +68,5 @@ print('F1_score_validation: ', prev_val)
 print('F1_score_test: ', prev_te)
 
 # Salvando o modelo
-filename = 'RFC_%s'%targ_shape[0]
+filename = 'RFC_%s.sav'%targ_shape[0]
 joblib.dump(rfc, base_dir+'/'+filename)
