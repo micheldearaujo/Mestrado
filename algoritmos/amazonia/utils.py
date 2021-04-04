@@ -18,6 +18,7 @@ from datetime import timedelta
 import joblib
 
 # Definindo o caminho dos diretorios
+#base_dir = '/home/michel/PycharmProjects/data/amazonia' # Ubuntu
 base_dir = 'D:/michel/data/amazonia/kaggle'
 train_dir = os.path.join(base_dir, 'train-jpg')
 test_dir = os.path.join(base_dir, 'test-jpg')

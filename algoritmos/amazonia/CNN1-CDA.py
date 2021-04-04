@@ -26,7 +26,7 @@ train_fnames = os.listdir(train_dir)
 test_fnames = os.listdir(test_dir)
 
 # Definindo qual é o dataset que usaremos e qual o optimizer
-targ_shape = (8,8,3)
+targ_shape = (64,64,3)
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 opt = SGD(lr=0.01, momentum=0.9)
 #opt = 'adam'
@@ -37,7 +37,9 @@ def load_dataset(dataset_name):
     data = np.load(base_dir + '/'+ dataset_name)
     X, y = data['arr_0'], data['arr_1']
     # Separando os sets de training e testing
-    Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, random_state=1)
+    Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.2, random_state=1)
+    Xval, yval = Xte[4048:,:], yte[4048:]
+    Xte, yte = Xte[:4048,:], yte[:4048]
     print('As dimensões dos vetores são: \n')
     print('Xtr: ', Xtr.shape)
     print('\n')
@@ -47,7 +49,11 @@ def load_dataset(dataset_name):
     print('\n')
     print('yte: ', yte.shape)
     print('\n')
-    return Xtr, Xte, ytr, yte
+    print('Xval: ', Xval.shape)
+    print('\n')
+    print('yval: ', yval.shape)
+    print('\n')
+    return Xtr, Xte, Xval, ytr, yte, yval
 
 
 # Criando a função para calcular o fbeta score
@@ -116,7 +122,7 @@ def resumo(modelohis):
 # Executando o modelo
 def run():
     # Load
-    Xtr, Xte, ytr, yte = load_dataset(dataset_name)
+    Xtr, Xte, Xval,ytr, yte, yval = load_dataset(dataset_name)
     # Criando o data augmentation, para aumentar a quantidade de imagens
     train_datagen = ImageDataGenerator(rescale=1.0/255.0,
                                        horizontal_flip=True,

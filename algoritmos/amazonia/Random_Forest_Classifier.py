@@ -16,6 +16,7 @@ import joblib
 
 start_time = time.monotonic()
 # Definindo o caminho dos diretorios
+#base_dir = '/home/michel/PycharmProjects/data/amazonia' # Ubuntu
 base_dir = 'D:/michel/data/amazonia/kaggle'
 train_dir = os.path.join(base_dir, 'train-jpg')
 test_dir = os.path.join(base_dir, 'test-jpg')
@@ -32,14 +33,14 @@ def load_dataset():
     X, y = data['arr_0'], data['arr_1']
     print('Dimensões: ')
     print('X: ',X.shape, '\n y: ', y.shape)
-    Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, random_state=1)
+    Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.2, random_state=1)
     Xtr = Xtr.reshape(Xtr.shape[0], targ_shape[0] * targ_shape[0] * 3)  ## Vamos concatenar os dados das 3 dimensoes em apenas 1 dimensão
     Xte = Xte.reshape(Xte.shape[0], targ_shape[0] * targ_shape[0] * 3)
     # Dividindo o set test em dois, para temos validation+test
-    Xval = Xte[:6072, :]
-    yval = yte[:6072]
-    Xte = Xte[6072:, :]
-    yte = yte[6072:]
+    Xval = Xte[:4048, :]
+    yval = yte[:4048]
+    Xte = Xte[4048:, :]
+    yte = yte[4048:]
     # Normalizando os dados entre 0 e 1
     scaler = MinMaxScaler()
     Xtr = scaler.fit_transform(Xtr)
@@ -56,9 +57,11 @@ rfc= RandomForestClassifier(n_estimators=100, verbose=1)
 rfc.fit(Xtr, ytr)
 # Validation set
 prev_val = evaluation(Xval, yval)
+score_val = rfc.score(Xval, yval)
+
 # Test set
 prev_te = evaluation(Xte, yte)
-
+score_te = rfc.score(Xte, yte)
 end_time = time.monotonic()
 print('Tempo do treinamento: ')
 print('\n')
@@ -66,6 +69,8 @@ print(timedelta(seconds=end_time - start_time))
 print('Amazon Dataset: ', targ_shape)
 print('F1_score_validation: ', prev_val)
 print('F1_score_test: ', prev_te)
+print('Score_validation: ', score_val)
+print('Score_test: ', score_te)
 
 # Salvando o modelo
 filename = 'RFC_%s.sav'%targ_shape[0]
