@@ -20,7 +20,7 @@ train_fnames = os.listdir(train_dir)
 test_fnames = os.listdir(test_dir)
 
 # Definindo os parametros
-targ_shape = (16,16)
+targ_shape = (64,64)
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 
 
@@ -29,7 +29,7 @@ def load_dataset():
     data = np.load(base_dir+'/'+dataset_name)
     X, y = data['arr_0'], data['arr_1']
     print('Dimensões: ')
-    print('X: ',X.shape, '\n y: ', y.shape)
+    print('X: ',X.shape, '\ny: ', y.shape)
     Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.2, random_state=1)
     Xtr = Xtr.reshape(Xtr.shape[0], targ_shape[0] * targ_shape[0] * 3)  ## Vamos concatenar os dados das 3 dimensoes em apenas 1 dimensão
     Xte = Xte.reshape(Xte.shape[0], targ_shape[0] * targ_shape[0] * 3)
@@ -83,12 +83,13 @@ score_te = knn.score(Xte, yte)
 filename = 'KNN_%s.sav'%targ_shape[0]
 joblib.dump(knn, base_dir+'/'+filename)
 
-print('Tempo do treinamento: ')
-print('\n')
-print(timedelta(seconds=end_time - start_time))
+
 print('Amazon Dataset: ', targ_shape)
 print('F1_score_validation: ', prev_val)
 print('F1_score_test: ', prev_te)
 print('Score_validation: ', score_val)
 print('Score_test: ', score_te)
 end_time = time.monotonic()
+print('Tempo do treinamento: ')
+print('\n')
+print(timedelta(seconds=end_time - start_time))
