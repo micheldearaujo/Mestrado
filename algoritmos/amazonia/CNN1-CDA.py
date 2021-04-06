@@ -55,6 +55,20 @@ def load_dataset(dataset_name):
     print('\n')
     return Xtr, Xte, Xval, ytr, yte, yval
 
+def load_testset(dataset_name):
+    # Carregando
+    data = np.load(base_dir + '/'+ dataset_name)
+    X, y = data['arr_0'], data['arr_1']
+    # Separando os sets de training e testing
+    Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.2, random_state=1)
+    Xte, yte = Xte[:4048,:], yte[:4048]
+    print('As dimensões dos vetores são: \n')
+    print('Xte shape: ', Xte.shape)
+    print('\n')
+    print('yte shape: ', yte.shape)
+    print('\n')
+    return Xte, yte
+
 
 # Criando a função para calcular o fbeta score
 def fbeta(y_true, y_pred, beta=2):
@@ -115,14 +129,14 @@ def resumo(modelohis):
     # Salvando o gráfico
     filename = sys.argv[0].split('/')[-1]
     plt.tight_layout()
-    plt.savefig(base_dir+'/'+filename + '_plot_8_adam.png')
+    plt.savefig(base_dir+'/'+filename + '_plot_%s_adam.png'%(targ_shape[0]))
     plt.close()
 
 
 # Executando o modelo
 def run():
     # Load
-    Xtr, Xte, Xval,ytr, yte, yval = load_dataset(dataset_name)
+    Xtr, Xte, Xval, ytr, yte, yval = load_dataset(dataset_name)
     # Criando o data augmentation, para aumentar a quantidade de imagens
     train_datagen = ImageDataGenerator(rescale=1.0/255.0,
                                        horizontal_flip=True,
@@ -136,20 +150,21 @@ def run():
     # Temos os arrays separados, Xtr..., e vamos aplicar o datagen
     # nestes arrays, e os iteradores se tornam os novos Xtr e ytr
     train_it = train_datagen.flow(Xtr, ytr, batch_size=targ_shape[0])
+    val_it = test_datagen.flow(Xval, yval, batch_size=targ_shape[0])
     test_it = test_datagen.flow(Xte, yte, batch_size=targ_shape[0])
     # Definindo o modelo
     modelo = define_model()
     # Fitando
     early_stop = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=25)
-    modelohis = modelo.fit(train_it,
+    modelofit = modelo.fit(train_it,
                                      steps_per_epoch=len(train_it),
-                                     validation_data=test_it,
-                                     validation_steps=len(test_it),
+                                     validation_data=val_it,
+                                     validation_steps=len(val_it),
                                      epochs=200,
                                      verbose=1, callbacks=[early_stop])
     # Avaliando o modelo
-    loss, fbeta = modelo.evaluate(test_it,
-                                            steps=len(test_it),
+    loss, fbeta = modelo.evaluate(val_it,
+                                            steps=len(val_it),
                                             verbose=1)
     print('> loss=%.3f, fbeta=%.3f'%(loss, fbeta))
     #resultados = ['Loss: ', loss,'Fbeta: ', fbeta, 'Val_loss: ', val_loss, 'Val_Fbeta: ', fbeta_loss]
@@ -158,7 +173,7 @@ def run():
     # Salvando o modelo para futuras previsoes
     modelo.save(base_dir+'/'+model_name)
     # Plotando as curvas de aprendizado
-    resumo(modelohis)
+    resumo(modelofit)
 
 
 

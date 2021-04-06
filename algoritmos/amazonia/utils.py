@@ -48,6 +48,21 @@ def load_dataset(dataset_name):
     Xte = scaler.fit_transform(Xte)
     return Xtr, Xte, Xval, ytr, yte, yval
 
+def load_testset(dataset_name):
+    # Carregando
+    data = np.load(base_dir + '/'+ dataset_name)
+    X, y = data['arr_0'], data['arr_1']
+    # Separando os sets de training e testing
+    Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.2, random_state=1)
+    Xte, yte = Xte[:4048,:], yte[:4048]
+    print('As dimensões dos vetores são: \n')
+    print('Xte shape: ', Xte.shape)
+    print('\n')
+    print('yte shape: ', yte.shape)
+    print('\n')
+    return Xte, yte
+
+
 def evaluation(modelo,x, true):
     ypred = modelo.predict(x)
     return f1_score(true, ypred, average='samples')
