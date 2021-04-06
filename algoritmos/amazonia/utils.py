@@ -25,10 +25,9 @@ test_dir = os.path.join(base_dir, 'test-jpg')
 train_fnames = os.listdir(train_dir)
 test_fnames = os.listdir(test_dir)
 
-targ_shape = (128,128)
-dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
+
 # Importando os dados
-def load_dataset():
+def load_dataset(dataset_name):
     data = np.load(base_dir+'/'+dataset_name)
     X, y = data['arr_0'], data['arr_1']
     print('Dimensões: ')
@@ -37,10 +36,10 @@ def load_dataset():
     Xtr = Xtr.reshape(Xtr.shape[0], targ_shape[0] * targ_shape[0] * 3)  ## Vamos concatenar os dados das 3 dimensoes em apenas 1 dimensão
     Xte = Xte.reshape(Xte.shape[0], targ_shape[0] * targ_shape[0] * 3)
     # Dividindo o set test em dois, para temos validation+test
-    Xval = Xte[:6072, :]
-    yval = yte[:6072]
-    Xte = Xte[6072:, :]
-    yte = yte[6072:]
+    Xval = Xte[:4048, :]
+    yval = yte[:4048]
+    Xte = Xte[4048:, :]
+    yte = yte[4048:]
     # Normalizando os dados entre 0 e 1
     scaler = MinMaxScaler()
     Xtr = scaler.fit_transform(Xtr)

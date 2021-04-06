@@ -18,7 +18,7 @@ from datetime import timedelta
 start_time = time.monotonic()
 
 # Definindo o caminho dos diretorios
-#base_dir = '/home/michel/PycharmProjects/data/amazonia' # Ubuntu
+#base_dir = '/home/michel/data/amazonia/kaggle' # Ubuntu
 base_dir = 'D:/michel/data/amazonia/kaggle' # Windows
 train_dir = os.path.join(base_dir, 'train-jpg')
 test_dir = os.path.join(base_dir, 'test-jpg')
