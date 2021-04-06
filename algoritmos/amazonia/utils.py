@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib.image import imread
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential, load_model
+from tensorflow.keras import backend
 from tensorflow.keras.layers import Dense, Conv2D, MaxPooling2D, Flatten, Dropout
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.callbacks import EarlyStopping
