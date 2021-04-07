@@ -59,7 +59,7 @@ def load_testset(dataset_name):
     # Carregando
     data = np.load(base_dir + '/'+ dataset_name)
     X, y = data['arr_0'], data['arr_1']
-    # Separando os sets de training e testing
+    # Criando o testset, lembrando que os primeiros 4048 são de validação, já utilizados em cima
     Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.2, random_state=1)
     Xte, yte = Xte[:4048,:], yte[:4048]
     print('As dimensões dos vetores são: \n')
@@ -143,15 +143,15 @@ def run():
                                        vertical_flip=True,
                                        rotation_range=90)
     # As imagens de teste apenas são reescaladas
-    test_datagen = ImageDataGenerator(rescale=1.0/255.0)
+    val_datagen = ImageDataGenerator(rescale=1.0/255.0)
     # Aplicando os iteradores
     # É aqui que criamos de fato os arrays que serão alimentados
     # nos modelos
     # Temos os arrays separados, Xtr..., e vamos aplicar o datagen
     # nestes arrays, e os iteradores se tornam os novos Xtr e ytr
     train_it = train_datagen.flow(Xtr, ytr, batch_size=targ_shape[0])
-    val_it = test_datagen.flow(Xval, yval, batch_size=targ_shape[0])
-    test_it = test_datagen.flow(Xte, yte, batch_size=targ_shape[0])
+    val_it = val_datagen.flow(Xval, yval, batch_size=targ_shape[0])
+    #test_it = test_datagen.flow(Xte, yte, batch_size=targ_shape[0])
     # Definindo o modelo
     modelo = define_model()
     # Fitando

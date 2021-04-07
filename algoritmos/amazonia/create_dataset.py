@@ -16,6 +16,8 @@ train_dir = os.path.join(base_dir, 'train-jpg')
 test_dir = os.path.join(base_dir, 'test-jpg')
 train_fnames = os.listdir(train_dir)
 test_fnames = os.listdir(test_dir)
+targ_shape = (16,16,3)
+targ_size = targ_shape[:-1]
 
 # Plotando algumas imagens
 def plot_imagens():
@@ -101,12 +103,11 @@ def load_dataset(path, file_mapping, tag_mapping,targ_size=(128,128)):
 
 # Executando
 
+
 # definindo o nome do csv
 filename='train_classes.csv'
 # Definindo o nome dos dados a serem salvos
-dataset_name = 'amazon_data_8.npz'
-# Definindo o tamanho das imagens
-targ_size = (8,8)
+dataset_name = 'amazon_data_%s.npz'%(targ_size[0])
 # Criando o dataframe com as tags das imagens
 mapping_csv = pd.read_csv(base_dir + '/' +filename)
 # Criando o dicionário com as tags strings para numeros
