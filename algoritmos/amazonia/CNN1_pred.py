@@ -129,9 +129,20 @@ df_labels['Predicted_label'] = df_labels['Predicted_proba'].apply(define_label)
 print(df_labels)
 
 # Calculando os TP, FP, TN, FN
+TP, FP, TN, FN = 0, 0, 0, 0
 TP = len(df_labels[(df_labels['True_labels'] != '-') & (df_labels['Predicted_label'] != '-')])
 FP = len(df_labels[(df_labels['True_labels'] == '-') & (df_labels['Predicted_label'] != '-')])
 TN = len(df_labels[(df_labels['True_labels'] == '-') & (df_labels['Predicted_label'] == '-')])
 FN = len(df_labels[(df_labels['True_labels'] != '-') & (df_labels['Predicted_label'] == '-')])
-print(TP+TN+FP+FN)
+print('True Positives: ',TP)
+print('False Positives: ',FP)
+print('True Negatives: ',TN)
+print('False Negatives: ',FN)
 
+# definindo e calculando as métricas:
+
+# Precision
+precision = TP/(TP+FP)
+
+# Recall (Sensibilidade ou True Positive Rate)
+recall = TP/(TP+FN)
