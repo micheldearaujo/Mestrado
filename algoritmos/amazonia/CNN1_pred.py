@@ -108,28 +108,24 @@ multi_predict = modelo.predict_proba(imgarray)
 
 # Criando um dataframe para mostrar as classes, as classes da imagem especifica e as classes previstas
 
-
 true_classes = mapping['train_%s'%k]
 classes =[]
 for i in range(len(inv_labels_map)):
     classes.append(inv_labels_map[i])
 
-def true_labels(x):
-    for h in range(len(true_classes)):
-        if x==true_classes[h]:
-            return x
-        else:
-            return '-'
+true_classes_list =['-' for i in range(len(classes))]
+for class_ in true_classes:
+    index_ = classes.index(class_)
+    true_classes_list[index_] = class_
 
 df_labels = pd.DataFrame(classes, columns=['Classes'])
-predicted_proba = pd.Series(multi_predict[0])
-df_labels['True_labels'] = df_labels['Classes'].apply(true_labels)
-df_labels['Predicted_proba'] = predicted_proba
+df_labels['True_labels'] = pd.Series(true_classes_list)
+df_labels['Predicted_proba'] = pd.Series(multi_predict[0])
 
 
 # Definindo como TRUE as classes que possuem probabilidade maior que 50%
 def define_label(x):
-    if x>0.5:
+    if x>0.3:
         return 'TRUE'
     else:
         return '-'
