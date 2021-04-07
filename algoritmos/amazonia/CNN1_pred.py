@@ -1,23 +1,38 @@
 # Prevendo novas imagens
 
-from utils import *
+import numpy as np
+import os
+import pandas as pd
+from tensorflow.keras.models import load_model
+from tensorflow.keras import backend
+from tensorflow.keras.preprocessing.image import img_to_array, load_img
+from tensorflow.keras.optimizers import SGD
+import time
+from datetime import timedelta
 
-#opt = SGD(lr=0.01, momentum=0.9)
-opt = 'adam'
+# Definindo o caminho dos diretorios
+#base_dir = '/home/michel/data/amazonia/kaggle' # Ubuntu
+base_dir = 'D:/michel/data/amazonia/kaggle' # Windows
+train_dir = os.path.join(base_dir, 'train-jpg')
+test_dir = os.path.join(base_dir, 'test-jpg')
+train_fnames = os.listdir(train_dir)
+test_fnames = os.listdir(test_dir)
+
+# Parâmetros do modelo
+opt = SGD(lr=0.01, momentum=0.9)
+#opt = 'adam'
 targ_shape = (16,16,3)
 targ_size = targ_shape[:-1]
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 model_name = 'CNN1_CDA_%s_adam.h5'%(targ_shape[0])
 
+# Definindo o arquivo csv com os nomes dos arquivos e os labels
 mapping_csv = pd.read_csv(base_dir + '/train_classes.csv')
 print("A dimensão do dataframe é: ",mapping_csv.shape) # Dimensões do dataframe com os labels
 
-# Carregando a imagem de test
-img_name = 'train_40470.jpg'
-img = load_img(train_dir+'/'+img_name, target_size=targ_size)
-imgarray = img_to_array(img)
-imgarray = imgarray.reshape((1,)+imgarray.shape) # Alterando a dimensão, agora é um vetor unidimensional
-imgarray = imgarray/255
+
+
+
 
 
 def fbeta(y_true, y_pred, beta=2):
@@ -70,24 +85,65 @@ modelo.compile(optimizer=opt, loss='binary_crossentropy', metrics=[fbeta])
 #                               steps=len(test_it),
 #                               verbose=1)
 
-mapping = mapping(mapping_csv)
+# Chamando o dicionario com filenames e classes
+mapping = create_file_mapping(mapping_csv)
+
+# Carregando a imagem de test
+k=40470
+img_name = 'train_%s.jpg'%k
+img = load_img(train_dir+'/'+img_name, target_size=targ_size)
+imgarray = img_to_array(img)
+imgarray = imgarray.reshape((1,)+imgarray.shape) # Alterando a dimensão, agora é um vetor unidimensional
+imgarray = imgarray/255
+
+# Criando os dicinários encondes
 labels_map, inv_labels_map = create_tag_map(mapping_csv)
 # realizando a previsao da imagem nova
 single_predict = modelo.predict_classes(imgarray)
 multi_predict = modelo.predict_proba(imgarray)
 
+# Criando um dataframe para mostrar as classes, as classes da imagem especifica e as classes previstas
 
+true_classes = mapping['train_%s'%k]
 classes =[]
 for i in range(len(inv_labels_map)):
     classes.append(inv_labels_map[i])
 
-df3_labels = pd.DataFrame(classes, columns=['True'])
-predicted_proba = pd.Series(multi_predict[0])
-df3_labels['Predicted_proba'] = predicted_proba
+true_classes_list =[0 for i in range(len(classes))]
+for class_ in true_classes:
+    index_ = classes.index(class_)
+    true_classes_list[index_] = 1
+
+df_labels = pd.DataFrame(classes, columns=['Classes'])
+df_labels['True_labels'] = pd.Series(true_classes_list)
+df_labels['Predicted_proba'] = pd.Series(multi_predict[0])
+
+
+# Definindo como TRUE as classes que possuem probabilidade maior que %
+threshold=0.3
 def define_label(x):
-    if x>0.5:
-        return 'TRUE'
+    if x>threshold:
+        return 1
     else:
-        return '-'
-df3_labels['Predicted_label'] = df3_labels['Predicted_proba'].apply(define_label)
-print(df3_labels)
+        return 0
+df_labels['Predicted_label'] = df_labels['Predicted_proba'].apply(define_label)
+print(df_labels)
+
+# Calculando os TP, FP, TN, FN
+TP, FP, TN, FN = 0, 0, 0, 0
+TP = len(df_labels[(df_labels['True_labels'] == 1) & (df_labels['Predicted_label'] == 1)])
+FP = len(df_labels[(df_labels['True_labels'] == 0) & (df_labels['Predicted_label'] == 1)])
+TN = len(df_labels[(df_labels['True_labels'] == 0) & (df_labels['Predicted_label'] == 0)])
+FN = len(df_labels[(df_labels['True_labels'] == 1) & (df_labels['Predicted_label'] == 0)])
+print('True Positives: ',TP)
+print('False Positives: ',FP)
+print('True Negatives: ',TN)
+print('False Negatives: ',FN)
+
+# definindo e calculando as métricas:
+
+# Precision
+precision = TP/(TP+FP)
+
+# Recall (Sensibilidade ou True Positive Rate)
+recall = TP/(TP+FN)
