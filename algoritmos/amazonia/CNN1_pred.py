@@ -3,12 +3,15 @@
 import numpy as np
 import os
 import pandas as pd
+from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import load_model
 from tensorflow.keras import backend
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
 from tensorflow.keras.optimizers import SGD
 import time
 from datetime import timedelta
+
+start_time = time.monotonic()
 
 # Definindo o caminho dos diretorios
 #base_dir = '/home/michel/data/amazonia/kaggle' # Ubuntu
@@ -29,10 +32,6 @@ model_name = 'CNN1_CDA_%s_adam.h5'%(targ_shape[0])
 # Definindo o arquivo csv com os nomes dos arquivos e os labels
 mapping_csv = pd.read_csv(base_dir + '/train_classes.csv')
 print("A dimensão do dataframe é: ",mapping_csv.shape) # Dimensões do dataframe com os labels
-
-
-
-
 
 
 def fbeta(y_true, y_pred, beta=2):
@@ -75,75 +74,99 @@ def create_file_mapping(mapping_csv):
         name, tags = mapping_csv['image_name'][j], mapping_csv['tags'][j]
         mapping[name] = tags.split(' ')
     return mapping
+# Criaremos uma funcao para carregar os dados de test, mas eh so pra ter quantas imagens sao
+def load_testset(dataset_name):
+    # Carregando
+    data = np.load(base_dir + '/'+ dataset_name)
+    X, y = data['arr_0'], data['arr_1']
+    # Criando o testset, lembrando que os primeiros 4048 são de validação, já utilizados em cima
+    Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.2, random_state=1)
+    Xte, yte = Xte[4048:,:], yte[4048:]
+    print('As dimensões dos vetores são: \n')
+    print('Xte shape: ', Xte.shape)
+    print('\n')
+    print('yte shape: ', yte.shape)
+    print('\n')
+    return Xte, yte
 
+# Carregando e compilando o modelo já treinado
 modelo = load_model(base_dir+'/'+model_name, compile=False)
 modelo.compile(optimizer=opt, loss='binary_crossentropy', metrics=[fbeta])
-# test_datagen = ImageDataGenerator(rescale=1.0/255.0)
-# Xte, yte = load_testset(dataset_name)
-# test_it = test_datagen.flow(Xte, yte, batch_size=targ_shape[0])
-# loss, fbeta = modelo.evaluate(test_it,
-#                               steps=len(test_it),
-#                               verbose=1)
-
 # Chamando o dicionario com filenames e classes
 mapping = create_file_mapping(mapping_csv)
-
-# Carregando a imagem de test
-k=40470
-img_name = 'train_%s.jpg'%k
-img = load_img(train_dir+'/'+img_name, target_size=targ_size)
-imgarray = img_to_array(img)
-imgarray = imgarray.reshape((1,)+imgarray.shape) # Alterando a dimensão, agora é um vetor unidimensional
-imgarray = imgarray/255
-
-# Criando os dicinários encondes
+# Criando os dicionários que relacionam um numero com cada classe
 labels_map, inv_labels_map = create_tag_map(mapping_csv)
-# realizando a previsao da imagem nova
-single_predict = modelo.predict_classes(imgarray)
-multi_predict = modelo.predict_proba(imgarray)
-
-# Criando um dataframe para mostrar as classes, as classes da imagem especifica e as classes previstas
-
-true_classes = mapping['train_%s'%k]
-classes =[]
+# Carregando o testset
+Xte, yte = load_testset(dataset_name)
+# Definindo o threshold (Tolerancia para classficiar como sim ou nao)
+threshold = 0.3
+# Criando uma lista com todas as classes possiveis
+classes = []
 for i in range(len(inv_labels_map)):
     classes.append(inv_labels_map[i])
-
-true_classes_list =[0 for i in range(len(classes))]
-for class_ in true_classes:
-    index_ = classes.index(class_)
-    true_classes_list[index_] = 1
-
-df_labels = pd.DataFrame(classes, columns=['Classes'])
-df_labels['True_labels'] = pd.Series(true_classes_list)
-df_labels['Predicted_proba'] = pd.Series(multi_predict[0])
-
-
-# Definindo como TRUE as classes que possuem probabilidade maior que %
-threshold=0.3
-def define_label(x):
-    if x>threshold:
-        return 1
-    else:
-        return 0
-df_labels['Predicted_label'] = df_labels['Predicted_proba'].apply(define_label)
-print(df_labels)
-
-# Calculando os TP, FP, TN, FN
+# Iniciando os contadores
 TP, FP, TN, FN = 0, 0, 0, 0
-TP = len(df_labels[(df_labels['True_labels'] == 1) & (df_labels['Predicted_label'] == 1)])
-FP = len(df_labels[(df_labels['True_labels'] == 0) & (df_labels['Predicted_label'] == 1)])
-TN = len(df_labels[(df_labels['True_labels'] == 0) & (df_labels['Predicted_label'] == 0)])
-FN = len(df_labels[(df_labels['True_labels'] == 1) & (df_labels['Predicted_label'] == 0)])
+# Iniciando o loop para classificar todas as imagens
+for image_no in range(len(Xte)+200, len(Xte)+220): #8096
+    print('Imagem %s de %s'%(image_no, 8096))
+    # Carregando a imagem de test
+    img_name = 'train_%s.jpg'%image_no
+    img = load_img(train_dir+'/'+img_name, target_size=targ_size)
+    imgarray = img_to_array(img)
+    imgarray = imgarray.reshape((1,)+imgarray.shape) # Alterando a dimensão, agora é um vetor unidimensional
+    imgarray = imgarray/255
+
+    # realizando a previsao da imagem nova
+    multi_predicted = modelo.predict_proba(imgarray)
+    # Criando uma lista com as classes verdadeiras da referida imagem
+    true_classes = mapping['train_%s'%image_no]
+    # Criando uma lista ordenada com as classes verdadeiras e todas as outras classes
+    true_classes_list =[0 for i in range(len(classes))]
+    for class_ in true_classes:
+        index_ = classes.index(class_)
+        true_classes_list[index_] = 1
+
+    # Criando um dataframe para organizar todas as informações da classificacao da imagem
+    df_labels = pd.DataFrame(classes, columns=['Labels'])
+    df_labels['True_labels'] = pd.Series(true_classes_list)
+    df_labels['Predicted_proba'] = pd.Series(multi_predicted[0])
+
+    # Definindo como 1 as classes que possuem probabilidade maior que % e 0 o contrario
+    def enconder(probabilidade):
+        if probabilidade>threshold:
+            return 1
+        else:
+            return 0
+    df_labels['Predicted_label'] = df_labels['Predicted_proba'].apply(enconder)
+    #print(df_labels)
+
+    # Calculando os TP, FP, TN, FN
+    TP = len(df_labels[(df_labels['True_labels'] == 1) & (df_labels['Predicted_label'] == 1)])
+    FP = len(df_labels[(df_labels['True_labels'] == 0) & (df_labels['Predicted_label'] == 1)])
+    TN = len(df_labels[(df_labels['True_labels'] == 0) & (df_labels['Predicted_label'] == 0)])
+    FN = len(df_labels[(df_labels['True_labels'] == 1) & (df_labels['Predicted_label'] == 0)])
+    # print('True Positives: ',TP)
+    # print('False Positives: ',FP)
+    # print('True Negatives: ',TN)
+    # print('False Negatives: ',FN)
+    TP, FP, TN, FN = TP+TP, FP+FP, TN+TN, FN+FN
+
+# definindo e calculando as métricas:
 print('True Positives: ',TP)
 print('False Positives: ',FP)
 print('True Negatives: ',TN)
 print('False Negatives: ',FN)
-
-# definindo e calculando as métricas:
-
 # Precision
 precision = TP/(TP+FP)
-
+print('Avg Precision: ', precision)
 # Recall (Sensibilidade ou True Positive Rate)
 recall = TP/(TP+FN)
+print('Avg Recal: ', recall)
+
+f1_score = 2*(precision*recall)/(precision+recall)
+print('Avg F1_Score:', f1_score)
+
+end_time = time.monotonic()
+print('Tempo de Classificação: ')
+print('\n')
+print(timedelta(seconds=end_time - start_time))
