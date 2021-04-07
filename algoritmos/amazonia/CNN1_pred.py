@@ -109,31 +109,32 @@ classes =[]
 for i in range(len(inv_labels_map)):
     classes.append(inv_labels_map[i])
 
-true_classes_list =['-' for i in range(len(classes))]
+true_classes_list =[0 for i in range(len(classes))]
 for class_ in true_classes:
     index_ = classes.index(class_)
-    true_classes_list[index_] = class_
+    true_classes_list[index_] = 1
 
 df_labels = pd.DataFrame(classes, columns=['Classes'])
 df_labels['True_labels'] = pd.Series(true_classes_list)
 df_labels['Predicted_proba'] = pd.Series(multi_predict[0])
 
 
-# Definindo como TRUE as classes que possuem probabilidade maior que 50%
+# Definindo como TRUE as classes que possuem probabilidade maior que %
+threshold=0.3
 def define_label(x):
-    if x>0.3:
-        return 'TRUE'
+    if x>threshold:
+        return 1
     else:
-        return '-'
+        return 0
 df_labels['Predicted_label'] = df_labels['Predicted_proba'].apply(define_label)
 print(df_labels)
 
 # Calculando os TP, FP, TN, FN
 TP, FP, TN, FN = 0, 0, 0, 0
-TP = len(df_labels[(df_labels['True_labels'] != '-') & (df_labels['Predicted_label'] != '-')])
-FP = len(df_labels[(df_labels['True_labels'] == '-') & (df_labels['Predicted_label'] != '-')])
-TN = len(df_labels[(df_labels['True_labels'] == '-') & (df_labels['Predicted_label'] == '-')])
-FN = len(df_labels[(df_labels['True_labels'] != '-') & (df_labels['Predicted_label'] == '-')])
+TP = len(df_labels[(df_labels['True_labels'] == 1) & (df_labels['Predicted_label'] == 1)])
+FP = len(df_labels[(df_labels['True_labels'] == 0) & (df_labels['Predicted_label'] == 1)])
+TN = len(df_labels[(df_labels['True_labels'] == 0) & (df_labels['Predicted_label'] == 0)])
+FN = len(df_labels[(df_labels['True_labels'] == 1) & (df_labels['Predicted_label'] == 0)])
 print('True Positives: ',TP)
 print('False Positives: ',FP)
 print('True Negatives: ',TN)
