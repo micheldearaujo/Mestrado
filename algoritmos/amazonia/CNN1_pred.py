@@ -34,12 +34,9 @@ model_name = 'CNN1_CDA_%s_adam.h5'%(targ_shape[0])
 mapping_csv = pd.read_csv(base_dir + '/train_classes.csv')
 print("A dimensão do dataframe é: ",mapping_csv.shape) # Dimensões do dataframe com os labels
 
-# Carregando a imagem de test
-img_name = 'train_40470.jpg'
-img = load_img(train_dir+'/'+img_name, target_size=targ_size)
-imgarray = img_to_array(img)
-imgarray = imgarray.reshape((1,)+imgarray.shape) # Alterando a dimensão, agora é um vetor unidimensional
-imgarray = imgarray/255
+
+
+
 
 
 def fbeta(y_true, y_pred, beta=2):
@@ -94,6 +91,15 @@ modelo.compile(optimizer=opt, loss='binary_crossentropy', metrics=[fbeta])
 
 # Chamando o dicionario com filenames e classes
 mapping = create_file_mapping(mapping_csv)
+
+# Carregando a imagem de test
+k=40470
+img_name = 'train_%s.jpg'%k
+img = load_img(train_dir+'/'+img_name, target_size=targ_size)
+imgarray = img_to_array(img)
+imgarray = imgarray.reshape((1,)+imgarray.shape) # Alterando a dimensão, agora é um vetor unidimensional
+imgarray = imgarray/255
+
 # Criando os dicinários encondes
 labels_map, inv_labels_map = create_tag_map(mapping_csv)
 # realizando a previsao da imagem nova
@@ -101,13 +107,25 @@ single_predict = modelo.predict_classes(imgarray)
 multi_predict = modelo.predict_proba(imgarray)
 
 # Criando um dataframe para mostrar as classes, as classes da imagem especifica e as classes previstas
+
+
+true_classes = mapping['train_%s'%k]
 classes =[]
 for i in range(len(inv_labels_map)):
     classes.append(inv_labels_map[i])
 
-df3_labels = pd.DataFrame(classes, columns=['Classes'])
+def true_labels(x):
+    for h in range(len(true_classes)):
+        if x==true_classes[h]:
+            return x
+        else:
+            return '-'
+
+df_labels = pd.DataFrame(classes, columns=['Classes'])
 predicted_proba = pd.Series(multi_predict[0])
-df3_labels['Predicted_proba'] = predicted_proba
+df_labels['True_labels'] = df_labels['Classes'].apply(true_labels)
+df_labels['Predicted_proba'] = predicted_proba
+
 
 # Definindo como TRUE as classes que possuem probabilidade maior que 50%
 def define_label(x):
@@ -115,5 +133,8 @@ def define_label(x):
         return 'TRUE'
     else:
         return '-'
-df3_labels['Predicted_label'] = df3_labels['Predicted_proba'].apply(define_label)
-print(df3_labels)
+df_labels['Predicted_label'] = df_labels['Predicted_proba'].apply(define_label)
+print(df_labels)
+
+# Agora eu preciso criar uma coluna no dataframe dizendo quais as classes de uma imagem em especifica
+# e então poder fazer a comparação e calcular TP, FP, TN, FN
