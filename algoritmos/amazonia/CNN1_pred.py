@@ -1,14 +1,36 @@
 # Prevendo novas imagens
 
-from utils import *
+import numpy as np
+import os
+import pandas as pd
+import matplotlib.pyplot as plt
+from PIL import Image
+from matplotlib.image import imread
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.models import Sequential, load_model
+from tensorflow.keras import backend
+from tensorflow.keras.preprocessing.image import img_to_array, array_to_img, load_img
+from tensorflow.keras.optimizers import SGD
+import time
+from datetime import timedelta
+import joblib
+# Definindo o caminho dos diretorios
+#base_dir = '/home/michel/data/amazonia/kaggle' # Ubuntu
+base_dir = 'D:/michel/data/amazonia/kaggle' # Windows
+train_dir = os.path.join(base_dir, 'train-jpg')
+test_dir = os.path.join(base_dir, 'test-jpg')
+train_fnames = os.listdir(train_dir)
+test_fnames = os.listdir(test_dir)
 
-#opt = SGD(lr=0.01, momentum=0.9)
-opt = 'adam'
+# Parâmetros do modelo
+opt = SGD(lr=0.01, momentum=0.9)
+#opt = 'adam'
 targ_shape = (16,16,3)
 targ_size = targ_shape[:-1]
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 model_name = 'CNN1_CDA_%s_adam.h5'%(targ_shape[0])
 
+# Definindo o arquivo csv com os nomes dos arquivos e os labels
 mapping_csv = pd.read_csv(base_dir + '/train_classes.csv')
 print("A dimensão do dataframe é: ",mapping_csv.shape) # Dimensões do dataframe com os labels
 
@@ -70,20 +92,24 @@ modelo.compile(optimizer=opt, loss='binary_crossentropy', metrics=[fbeta])
 #                               steps=len(test_it),
 #                               verbose=1)
 
-mapping = mapping(mapping_csv)
+# Chamando o dicionario com filenames e classes
+mapping = create_file_mapping(mapping_csv)
+# Criando os dicinários encondes
 labels_map, inv_labels_map = create_tag_map(mapping_csv)
 # realizando a previsao da imagem nova
 single_predict = modelo.predict_classes(imgarray)
 multi_predict = modelo.predict_proba(imgarray)
 
-
+# Criando um dataframe para mostrar as classes, as classes da imagem especifica e as classes previstas
 classes =[]
 for i in range(len(inv_labels_map)):
     classes.append(inv_labels_map[i])
 
-df3_labels = pd.DataFrame(classes, columns=['True'])
+df3_labels = pd.DataFrame(classes, columns=['Classes'])
 predicted_proba = pd.Series(multi_predict[0])
 df3_labels['Predicted_proba'] = predicted_proba
+
+# Definindo como TRUE as classes que possuem probabilidade maior que 50%
 def define_label(x):
     if x>0.5:
         return 'TRUE'
