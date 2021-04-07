@@ -7,6 +7,14 @@ targ_shape = (16,16,3)
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 model_name = 'CNN1_CDA_16_adam.h5'
 
+# Carregando a imagem de test
+img_name = 'train_40477.jpg'
+img = load_img(train_dir+'/'+img_name, target_size=(16,16))
+imgarray = img_to_array(img)
+imgarray = imgarray.reshape((1,)+imgarray.shape) # Alterando a dimensão, agora é um vetor unidimensional
+imgarray = imgarray/255
+
+
 def fbeta(y_true, y_pred, beta=2):
     # Clipando a previsao
     y_pred = backend.clip(y_pred, 0, 1)
