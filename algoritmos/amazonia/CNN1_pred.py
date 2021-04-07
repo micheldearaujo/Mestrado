@@ -3,17 +3,13 @@
 import numpy as np
 import os
 import pandas as pd
-import matplotlib.pyplot as plt
-from PIL import Image
-from matplotlib.image import imread
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.models import Sequential, load_model
+from tensorflow.keras.models import load_model
 from tensorflow.keras import backend
-from tensorflow.keras.preprocessing.image import img_to_array, array_to_img, load_img
+from tensorflow.keras.preprocessing.image import img_to_array, load_img
 from tensorflow.keras.optimizers import SGD
 import time
 from datetime import timedelta
-import joblib
+
 # Definindo o caminho dos diretorios
 #base_dir = '/home/michel/data/amazonia/kaggle' # Ubuntu
 base_dir = 'D:/michel/data/amazonia/kaggle' # Windows
@@ -132,5 +128,10 @@ def define_label(x):
 df_labels['Predicted_label'] = df_labels['Predicted_proba'].apply(define_label)
 print(df_labels)
 
-# Agora eu preciso criar uma coluna no dataframe dizendo quais as classes de uma imagem em especifica
-# e então poder fazer a comparação e calcular TP, FP, TN, FN
+# Calculando os TP, FP, TN, FN
+TP = len(df_labels[(df_labels['True_labels'] != '-') & (df_labels['Predicted_label'] != '-')])
+FP = len(df_labels[(df_labels['True_labels'] == '-') & (df_labels['Predicted_label'] != '-')])
+TN = len(df_labels[(df_labels['True_labels'] == '-') & (df_labels['Predicted_label'] == '-')])
+FN = len(df_labels[(df_labels['True_labels'] != '-') & (df_labels['Predicted_label'] == '-')])
+print(TP+TN+FP+FN)
+
