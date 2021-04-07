@@ -106,71 +106,90 @@ for i in range(len(inv_labels_map)):
 
 # Definindo o threshold (Tolerancia para classficiar como sim ou nao)
 threshold = 0.3
+thresholds = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
 # Iniciando os contadores
 TP, FP, TN, FN = 0, 0, 0, 0
+TPl, FPl, TNl, FNl = [], [], [], []
+precisionl, recalll, f1_scorel = [], [], []
 # Iniciando o loop para classificar todas as imagens
+for threshold in thresholds:
+    for image_no in range(len(Xte)+30, len(Xte)+45): #8096
+        print('Imagem %s de %s'%(image_no, 8096))
+        # Carregando a imagem de test
+        img_name = 'train_%s.jpg'%image_no
+        img = load_img(train_dir+'/'+img_name, target_size=targ_size)
+        imgarray = img_to_array(img)
+        imgarray = imgarray.reshape((1,)+imgarray.shape) # Alterando a dimensão, agora é um vetor unidimensional
+        imgarray = imgarray/255
 
-for image_no in range(len(Xte), len(Xte)+100): #8096
-    print('Imagem %s de %s'%(image_no, 8096))
-    # Carregando a imagem de test
-    img_name = 'train_%s.jpg'%image_no
-    img = load_img(train_dir+'/'+img_name, target_size=targ_size)
-    imgarray = img_to_array(img)
-    imgarray = imgarray.reshape((1,)+imgarray.shape) # Alterando a dimensão, agora é um vetor unidimensional
-    imgarray = imgarray/255
+        # realizando a previsao da imagem nova
+        multi_predicted = modelo.predict_proba(imgarray)
+        # Criando uma lista com as classes verdadeiras da referida imagem
+        true_classes = mapping['train_%s'%image_no]
+        # Criando uma lista ordenada com as classes verdadeiras e todas as outras classes
+        true_classes_list =[0 for i in range(len(classes))]
+        for class_ in true_classes:
+            index_ = classes.index(class_)
+            true_classes_list[index_] = 1
 
-    # realizando a previsao da imagem nova
-    multi_predicted = modelo.predict_proba(imgarray)
-    # Criando uma lista com as classes verdadeiras da referida imagem
-    true_classes = mapping['train_%s'%image_no]
-    # Criando uma lista ordenada com as classes verdadeiras e todas as outras classes
-    true_classes_list =[0 for i in range(len(classes))]
-    for class_ in true_classes:
-        index_ = classes.index(class_)
-        true_classes_list[index_] = 1
+        # Criando um dataframe para organizar todas as informações da classificacao da imagem
+        df_labels = pd.DataFrame(classes, columns=['Labels'])
+        df_labels['True_labels'] = pd.Series(true_classes_list)
+        df_labels['Predicted_proba'] = pd.Series(multi_predicted[0])
 
-    # Criando um dataframe para organizar todas as informações da classificacao da imagem
-    df_labels = pd.DataFrame(classes, columns=['Labels'])
-    df_labels['True_labels'] = pd.Series(true_classes_list)
-    df_labels['Predicted_proba'] = pd.Series(multi_predicted[0])
+        # Definindo como 1 as classes que possuem probabilidade maior que % e 0 o contrario
+        def enconder(probabilidade):
+            if probabilidade>threshold:
+                return 1
+            else:
+                return 0
+        df_labels['Predicted_label'] = df_labels['Predicted_proba'].apply(enconder)
+        #print(df_labels)
 
-    # Definindo como 1 as classes que possuem probabilidade maior que % e 0 o contrario
-    def enconder(probabilidade):
-        if probabilidade>threshold:
-            return 1
-        else:
-            return 0
-    df_labels['Predicted_label'] = df_labels['Predicted_proba'].apply(enconder)
-    #print(df_labels)
+        # Calculando os TP, FP, TN, FN
+        TP = len(df_labels[(df_labels['True_labels'] == 1) & (df_labels['Predicted_label'] == 1)])
+        FP = len(df_labels[(df_labels['True_labels'] == 0) & (df_labels['Predicted_label'] == 1)])
+        TN = len(df_labels[(df_labels['True_labels'] == 0) & (df_labels['Predicted_label'] == 0)])
+        FN = len(df_labels[(df_labels['True_labels'] == 1) & (df_labels['Predicted_label'] == 0)])
+        # print('True Positives: ',TP)
+        # print('False Positives: ',FP)
+        # print('True Negatives: ',TN)
+        # print('False Negatives: ',FN)
+        TP, FP, TN, FN = TP+TP, FP+FP, TN+TN, FN+FN
 
-    # Calculando os TP, FP, TN, FN
-    TP = len(df_labels[(df_labels['True_labels'] == 1) & (df_labels['Predicted_label'] == 1)])
-    FP = len(df_labels[(df_labels['True_labels'] == 0) & (df_labels['Predicted_label'] == 1)])
-    TN = len(df_labels[(df_labels['True_labels'] == 0) & (df_labels['Predicted_label'] == 0)])
-    FN = len(df_labels[(df_labels['True_labels'] == 1) & (df_labels['Predicted_label'] == 0)])
-    # print('True Positives: ',TP)
-    # print('False Positives: ',FP)
-    # print('True Negatives: ',TN)
-    # print('False Negatives: ',FN)
-    TP, FP, TN, FN = TP+TP, FP+FP, TN+TN, FN+FN
+    # definindo e calculando as métricas:
+    print('True Positives: ', TP)
+    print('False Positives: ', FP)
+    print('True Negatives: ', TN)
+    print('False Negatives: ', FN)
+    # Precision
+    precision = TP / (TP + FP)
+    print('Avg Precision: ', precision)
+    # Recall (Sensibilidade ou True Positive Rate)
+    recall = TP / (TP + FN)
+    print('Avg Recal: ', recall)
+    # F1 Score (Media ponderada entre precision e recall)
+    f1_score = 2 * (precision * recall) / (precision + recall)
+    print('Avg F1_Score:', f1_score)
+    # Adicionado ao dicionario esta j-esima imagem
+    TPl.append(TP)
+    FPl.append(FP)
+    TNl.append(TN)
+    FNl.append(FN)
+    precisionl.append(precision)
+    recalll.append(recall)
+    f1_scorel.append(f1_score)
 
-# definindo e calculando as métricas:
-print('True Positives: ', TP)
-print('False Positives: ', FP)
-print('True Negatives: ', TN)
-print('False Negatives: ', FN)
-# Precision
-precision = TP / (TP + FP)
-print('Avg Precision: ', precision)
-# Recall (Sensibilidade ou True Positive Rate)
-recall = TP / (TP + FN)
-print('Avg Recal: ', recall)
-# F1 Score (Media ponderada entre precision e recall)
-f1_score = 2 * (precision * recall) / (precision + recall)
-print('Avg F1_Score:', f1_score)
-# Adicionado ao dicionario esta j-esima imagem
-
-
+# Criando um dataframe com todas as informacoes em funcao do threshold
+dic = {'TP':TPl,
+       'FP':FPl,
+       'TN':TNl,
+       'FN':FNl,
+       'Precision':precisionl,
+       'Recall':recalll,
+       'F1_score':f1_scorel}
+final_scores = pd.DataFrame(dic, index=thresholds)
+final_scores.to_csv(base_dir+'/'+'CNN_Scores.csv')
 
 
 end_time = time.monotonic()

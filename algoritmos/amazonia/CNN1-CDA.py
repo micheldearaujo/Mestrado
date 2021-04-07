@@ -38,8 +38,8 @@ def load_dataset(dataset_name):
     X, y = data['arr_0'], data['arr_1']
     # Separando os sets de training e testing
     Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.2, random_state=1)
-    Xval, yval = Xte[4048:,:], yte[4048:]
-    Xte, yte = Xte[:4048,:], yte[:4048]
+    Xval, yval = Xte[:4048,:], yte[:4048]
+    Xte, yte = Xte[4048:,:], yte[4048:]
     print('As dimensões dos vetores são: \n')
     print('Xtr: ', Xtr.shape)
     print('\n')
@@ -61,7 +61,7 @@ def load_testset(dataset_name):
     X, y = data['arr_0'], data['arr_1']
     # Criando o testset, lembrando que os primeiros 4048 são de validação, já utilizados em cima
     Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.2, random_state=1)
-    Xte, yte = Xte[:4048,:], yte[:4048]
+    Xte, yte = Xte[4048:,:], yte[4048:]
     print('As dimensões dos vetores são: \n')
     print('Xte shape: ', Xte.shape)
     print('\n')
