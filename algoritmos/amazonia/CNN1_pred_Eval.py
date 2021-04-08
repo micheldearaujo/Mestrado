@@ -23,7 +23,7 @@ test_fnames = os.listdir(test_dir)
 
 # Parâmetros do modelo
 opt = SGD(lr=0.01, momentum=0.9)
-targ_shape = (64,64,3)
+targ_shape = (32,32,3)
 targ_size = targ_shape[:-1]
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 model_name = 'CNN1_CDA_%s_SGD.h5'%(targ_shape[0])
