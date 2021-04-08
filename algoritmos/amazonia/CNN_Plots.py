@@ -23,15 +23,40 @@ model_name = 'CNN1_CDA_%s_SGD.h5'%(targ_shape[0])
 df16 = pd.read_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(16), index_col='Unnamed: 0')
 df32 = pd.read_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(32), index_col='Unnamed: 0')
 df64 = pd.read_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(64), index_col='Unnamed: 0')
+df128 = pd.read_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(128), index_col='Unnamed: 0')
 
 plt.figure(1)
 df16['Avg Precision'].plot(label = 'Avg Precision 16')
-df16['Avg Recall'].plot(label ='Avg Recall 16')
 df32['Avg Precision'].plot(label = 'Avg Precision 32')
-df32['Avg Recall'].plot(label ='Avg Recall 32')
 df64['Avg Precision'].plot(label = 'Avg Precision 64')
-df64['Avg Recall'].plot(label ='Avg Recall 64')
-plt.title('Precision Versus Recall')
+#df128['Avg Precision'].plot(label = 'Avg Precision 128')
+df16['Avg Recall'].plot(label = 'Avg Recall 16')
+df32['Avg Recall'].plot(label = 'Avg Recall 32')
+df64['Avg Recall'].plot(label = 'Avg Recall 64')
+#df128['Avg Recall'].plot(label = 'Avg Recall 128')
+plt.title('Precision and Recall vs Threshold')
 plt.xlabel('Threshold')
 plt.legend()
+
+def create_target_size16(x):
+    return '16x16'
+def create_target_size32(x):
+    return '32x32'
+def create_target_size64(x):
+    return '65x64'
+def create_target_size128(x):
+    return '128x128'
+
+df16['Target_size'] = df16['Avg TP'].apply(create_target_size16)
+df32['Target_size'] = df32['Avg TP'].apply(create_target_size32)
+df64['Target_size'] = df64['Avg TP'].apply(create_target_size64)
+df128['Target_size'] = df128['Avg TP'].apply(create_target_size128)
+df = pd.concat([df16,df32,df64], axis =0)
+plt.figure(2)
+sns.jointplot(data=df, x='Avg Recall', y='Avg Precision', hue='Target_size',xlim=(0.2,1.1), ylim=(0.2,1.1))
+plt.title('Precision Vs Recall')
+plt.xlabel('Recall')
+plt.ylabel('Precision')
+plt.legend()
 plt.show()
+sns.jointplot()
