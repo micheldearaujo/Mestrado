@@ -29,7 +29,6 @@ test_fnames = os.listdir(test_dir)
 targ_shape = (64,64,3)
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 opt = SGD(lr=0.01, momentum=0.9)
-#opt = 'adam'
 
 # Carregamento dos dados que ja criamos no 'create_dataset.py'
 def load_dataset(dataset_name):

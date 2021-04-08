@@ -23,15 +23,14 @@ test_fnames = os.listdir(test_dir)
 
 # Parâmetros do modelo
 opt = SGD(lr=0.01, momentum=0.9)
-#opt = 'adam'
-targ_shape = (16,16,3)
+targ_shape = (64,64,3)
 targ_size = targ_shape[:-1]
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 model_name = 'CNN1_CDA_%s_adam.h5'%(targ_shape[0])
 
 # Definindo o arquivo csv com os nomes dos arquivos e os labels
 mapping_csv = pd.read_csv(base_dir + '/train_classes.csv')
-print("A dimensão do dataframe é: ",mapping_csv.shape) # Dimensões do dataframe com os labels
+print("A dimensão do dataframe é: ", mapping_csv.shape) # Dimensões do dataframe com os labels
 
 
 def fbeta(y_true, y_pred, beta=2):
@@ -107,7 +106,7 @@ for i in range(len(inv_labels_map)):
 # Definindo o threshold (Tolerancia para classficiar como sim ou nao)
 threshold = 0.3
 # Classify only one image
-image_no = 40478
+image_no = 40477
 
 # Carregando a imagem de test
 img_name = 'train_%s.jpg'%image_no

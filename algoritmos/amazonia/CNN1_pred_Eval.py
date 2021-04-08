@@ -23,11 +23,10 @@ test_fnames = os.listdir(test_dir)
 
 # Parâmetros do modelo
 opt = SGD(lr=0.01, momentum=0.9)
-#opt = 'adam'
-targ_shape = (16,16,3)
+targ_shape = (64,64,3)
 targ_size = targ_shape[:-1]
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
-model_name = 'CNN1_CDA_%s_adam.h5'%(targ_shape[0])
+model_name = 'CNN1_CDA_%s_SGD.h5'%(targ_shape[0])
 
 # Definindo o arquivo csv com os nomes dos arquivos e os labels
 mapping_csv = pd.read_csv(base_dir + '/train_classes.csv')
@@ -105,9 +104,8 @@ for i in range(len(inv_labels_map)):
     classes.append(inv_labels_map[i])
 
 # Definindo o threshold (Tolerancia para classficiar como sim ou nao)
-threshold = 0.3
-thresholds=[0.1, 0.2]
-#thresholds = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+
+thresholds = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 # Iniciando os contadores
 TPl, FPl, TNl, FNl = [], [], [], []
 precisionl, recalll, f1_scorel = [], [], []
@@ -152,10 +150,6 @@ for threshold in thresholds:
         FP += len(df_labels[(df_labels['True_labels'] == 0) & (df_labels['Predicted_label'] == 1)])
         TN += len(df_labels[(df_labels['True_labels'] == 0) & (df_labels['Predicted_label'] == 0)])
         FN += len(df_labels[(df_labels['True_labels'] == 1) & (df_labels['Predicted_label'] == 0)])
-        # print('True Positives: ',TP)
-        # print('False Positives: ',FP)
-        # print('True Negatives: ',TN)
-        # print('False Negatives: ',FN)
 
     # definindo e calculando as métricas:
     print('Avg True Positives: ', TP)
@@ -189,7 +183,7 @@ dic = {'Avg TP':TPl,
        'Avg Recall':recalll,
        'Avg F1_score':f1_scorel}
 final_scores = pd.DataFrame(dic, index=thresholds)
-final_scores.to_csv(base_dir+'/'+'CNN_Scores.csv')
+final_scores.to_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(targ_shape[0]))
 
 
 end_time = time.monotonic()
