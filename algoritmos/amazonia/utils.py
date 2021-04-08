@@ -62,8 +62,3 @@ def load_testset(dataset_name):
     print('yte shape: ', yte.shape)
     print('\n')
     return Xte, yte
-
-
-def evaluation(modelo,x, true):
-    ypred = modelo.predict(x)
-    return f1_score(true, ypred, average='samples')
