@@ -16,4 +16,14 @@ the land use and land cover of the Amazon rainforest.
   * 128x128;
 
 * After each algorithm is trained, it is time to make search for the best configurations for each one of them. This can be done;
-  * 
+  * KNN - Looking for the best number K;
+  * RF - Looking for the best number of estimators;
+  * CNN - Looking for the best threshold number;
+  * RNN - i Don't know yet.
+ 
+* After choosen the best parameters of all the algorithms it is time to make single predictions on the raspiberry pi! 
+  * KNN;
+  * RF;
+  * CNN;
+  
+ * After all of this, comes the time to write everything down to the SMC paper!
