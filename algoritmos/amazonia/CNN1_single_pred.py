@@ -23,7 +23,7 @@ test_fnames = os.listdir(test_dir)
 
 # Parâmetros do modelo
 opt = SGD(lr=0.01, momentum=0.9)
-targ_shape = (64,64,3)
+targ_shape = (32,32,3)
 targ_size = targ_shape[:-1]
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 model_name = 'CNN1_CDA_%s_SGD.h5'%(targ_shape[0])
@@ -106,7 +106,7 @@ for i in range(len(inv_labels_map)):
 # Definindo o threshold (Tolerancia para classficiar como sim ou nao)
 threshold = 0.3
 # Classify only one image
-image_no = 40477
+image_no = 40478
 
 # Carregando a imagem de test
 img_name = 'train_%s.jpg'%image_no
