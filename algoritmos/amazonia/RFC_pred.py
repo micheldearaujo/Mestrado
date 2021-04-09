@@ -41,7 +41,7 @@ img_name = 'train_%s.jpg'%image_no
 print(img_name)
 img = load_img(train_dir+'/'+img_name, target_size=targ_size)
 imgarray = img_to_array(img)
-imgarray = imgarray.reshape((targ_size[0]**2)*3,) # Alterando a dimensão, agora é um vetor unidimensional
+imgarray = imgarray.reshape(1,-1) # Alterando a dimensão, agora é um vetor unidimensional
 imgarray = imgarray/255
 
 # Avaliando o modelo
