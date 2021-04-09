@@ -36,37 +36,18 @@ def load_dataset(dataset_name):
     data = np.load(base_dir + '/'+ dataset_name)
     X, y = data['arr_0'], data['arr_1']
     # Separando os sets de training e testing
-    Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.2, random_state=1)
-    Xval, yval = Xte[:4048,:], yte[:4048]
-    Xte, yte = Xte[4048:,:], yte[4048:]
+    Xtr, Xval, ytr, yval = train_test_split(X, y, test_size=0.2, random_state=1)
+    Xval, yval = Xval[:4048,:], yval[:4048]
     print('As dimensões dos vetores são: \n')
     print('Xtr: ', Xtr.shape)
     print('\n')
     print('ytr: ', ytr.shape)
     print('\n')
-    print('Xte: ', Xte.shape)
-    print('\n')
-    print('yte: ', yte.shape)
-    print('\n')
     print('Xval: ', Xval.shape)
     print('\n')
     print('yval: ', yval.shape)
     print('\n')
-    return Xtr, Xte, Xval, ytr, yte, yval
-
-def load_testset(dataset_name):
-    # Carregando
-    data = np.load(base_dir + '/'+ dataset_name)
-    X, y = data['arr_0'], data['arr_1']
-    # Criando o testset, lembrando que os primeiros 4048 são de validação, já utilizados em cima
-    Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.2, random_state=1)
-    Xte, yte = Xte[4048:,:], yte[4048:]
-    print('As dimensões dos vetores são: \n')
-    print('Xte shape: ', Xte.shape)
-    print('\n')
-    print('yte shape: ', yte.shape)
-    print('\n')
-    return Xte, yte
+    return Xtr, Xval, ytr, yval
 
 
 # Criando a função para calcular o fbeta score
@@ -131,7 +112,7 @@ def resumo(modelohis):
 # Executando o modelo
 def run():
     # Load
-    Xtr, Xte, Xval, ytr, yte, yval = load_dataset(dataset_name)
+    Xtr, Xval, ytr, yval = load_dataset(dataset_name)
     # Criando o data augmentation, para aumentar a quantidade de imagens
     train_datagen = ImageDataGenerator(rescale=1.0/255.0,
                                        horizontal_flip=True,

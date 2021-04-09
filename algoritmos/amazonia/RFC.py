@@ -24,7 +24,7 @@ train_fnames = os.listdir(train_dir)
 test_fnames = os.listdir(test_dir)
 
 # Definindo os parametros
-targ_shape = (64,64)
+targ_shape = (8,8)
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 
 # Importando os dados
@@ -39,26 +39,23 @@ def load_dataset():
     # Dividindo o set test em dois, para temos validation+test
     Xval = Xte[:4048, :]
     yval = yte[:4048]
-    Xte = Xte[4048:, :]
-    yte = yte[4048:]
     # Normalizando os dados entre 0 e 1
     scaler = MinMaxScaler()
     Xtr = scaler.fit_transform(Xtr)
     Xval = scaler.fit_transform(Xval)
     Xte = scaler.fit_transform(Xte)
-    return Xtr, Xte, Xval, ytr, yte, yval
+    return Xtr, Xval, ytr, yval
 
 def evaluation(x, true):
     ypred = rfc.predict(x)
     return f1_score(true, ypred, average='samples')
 
 # Loading the dataset
-Xtr, Xte, Xval, ytr, yte, yval = load_dataset()
+Xtr, Xval, ytr, yval = load_dataset()
 
 # Creating and fitting the model
 rfc = RandomForestClassifier(n_estimators=500, verbose=1, oob_score=True)
 rfc.fit(Xtr, ytr)
-
 
 # Validation set
 prev_val = evaluation(Xval, yval)
@@ -75,9 +72,8 @@ print('\n')
 print(timedelta(seconds=end_time - start_time))
 print('Amazon Dataset: ', targ_shape)
 print('F1_score_validation: ', prev_val)
-print('F1_score_test: ', prev_te)
 print('Score_validation: ', score_val)
-print('Score_test: ', score_te)
+
 
 # Salvando o modelo
 filename = 'RFC_%s_%s.sav'%(targ_shape[0],500)
