@@ -26,6 +26,7 @@ test_fnames = os.listdir(test_dir)
 # Definindo os parametros
 targ_shape = (16,16)
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
+estimators = 500
 
 # Importando os dados
 def load_dataset():
@@ -54,7 +55,7 @@ def evaluation(x, true):
 Xtr, Xval, ytr, yval = load_dataset()
 
 # Creating and fitting the model
-rfc = RandomForestClassifier(n_estimators=500, verbose=1, oob_score=True)
+rfc = RandomForestClassifier(n_estimators=estimators, verbose=1, oob_score=True)
 rfc.fit(Xtr, ytr)
 
 # Validation set

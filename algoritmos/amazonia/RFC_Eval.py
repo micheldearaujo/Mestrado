@@ -6,6 +6,7 @@ start_time=time.monotonic()
 targ_shape = (8,8,3)
 targ_size = targ_shape[:-1]
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
+estimators=100
 
 # -------------------------------------------------
 # Definindo o arquivo csv com os nomes dos arquivos e os labels
@@ -136,7 +137,7 @@ print('Tempo de Classificação:')
 print(tempo)
 
 file=open('RFC_Scores.txt','a')
-file.write('Image Size: %s\n'%targ_shape[0])
+file.write('Image Size: %s_%s\n'%(targ_shape[0],n_estimators))
 file.write('Evaluation time: %s\n'%tempo)
 file.write('Avg Precision: %s\n'%precision)
 file.write('Avg Recall: %s\n'%recall)
