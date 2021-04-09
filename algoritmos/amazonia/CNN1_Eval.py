@@ -23,7 +23,7 @@ test_fnames = os.listdir(test_dir)
 
 # Parâmetros do modelo
 opt = SGD(lr=0.01, momentum=0.9)
-targ_shape = (32,32,3)
+targ_shape = (8,8,3)
 targ_size = targ_shape[:-1]
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 model_name = 'CNN1_CDA_%s_SGD.h5'%(targ_shape[0])
@@ -91,10 +91,16 @@ def load_testset(dataset_name):
 # Carregando e compilando o modelo já treinado
 modelo = load_model(base_dir+'/'+model_name, compile=False)
 modelo.compile(optimizer=opt, loss='binary_crossentropy', metrics=[fbeta])
+
+
 # Chamando o dicionario com filenames e classes
 mapping = create_file_mapping(mapping_csv)
+
+
 # Criando os dicionários que relacionam um numero com cada classe
 labels_map, inv_labels_map = create_tag_map(mapping_csv)
+
+
 # Carregando o testset
 Xte, yte = load_testset(dataset_name)
 
@@ -123,8 +129,10 @@ for threshold in thresholds:
 
         # realizando a previsao da imagem nova
         multi_predicted = modelo.predict_proba(imgarray)
+
         # Criando uma lista com as classes verdadeiras da referida imagem
         true_classes = mapping['train_%s'%image_no]
+
         # Criando uma lista ordenada com as classes verdadeiras e todas as outras classes
         true_classes_list =[0 for i in range(len(classes))]
         for class_ in true_classes:
