@@ -145,7 +145,7 @@ def run():
     print('> loss=%.3f, fbeta=%.3f'%(loss, fbeta))
     #resultados = ['Loss: ', loss,'Fbeta: ', fbeta, 'Val_loss: ', val_loss, 'Val_Fbeta: ', fbeta_loss]
     # Definindo o nome do modelo
-    model_name = 'CNN1_CDA_%s_SGD_.h5'%(targ_shape[0])
+    model_name = 'CNN1_CDA_%s_SGD.h5'%(targ_shape[0])
     # Salvando o modelo para futuras previsoes
     modelo.save(base_dir+'/'+model_name)
     # Plotando as curvas de aprendizado
