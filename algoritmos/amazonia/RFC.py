@@ -52,8 +52,11 @@ def evaluation(x, true):
     ypred = rfc.predict(x)
     return f1_score(true, ypred, average='samples')
 
+# Loading the dataset
 Xtr, Xte, Xval, ytr, yte, yval = load_dataset()
-rfc= RandomForestClassifier(n_estimators=100, verbose=1)
+
+# Creating and fitting the model
+rfc = RandomForestClassifier(n_estimators=500, verbose=1, oob_score=True)
 rfc.fit(Xtr, ytr)
 
 
@@ -77,5 +80,5 @@ print('Score_validation: ', score_val)
 print('Score_test: ', score_te)
 
 # Salvando o modelo
-filename = 'RFC_%s.sav'%targ_shape[0]
+filename = 'RFC_%s_%s.sav'%(targ_shape[0],500)
 joblib.dump(rfc, base_dir+'/'+filename)

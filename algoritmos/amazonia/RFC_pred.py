@@ -3,7 +3,7 @@ from utils import *
 
 
 # Definindo os parametros
-targ_shape = (16,16,3)
+targ_shape = (64,64,3)
 targ_size = targ_shape[:-1]
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 
@@ -23,24 +23,33 @@ def load_testset(dataset_name):
     print('\n')
     return Xte, yte
 
+def evaluation(X, y):
+    ypred = rfc.predict(X)
+    return ypred
 
 # Carregando o modelo
 rfc = joblib.load(base_dir+'/'+'RFC_%s.sav'%(targ_shape[0]))
+
 # Carregando o testset inteiro
 Xte, yte = load_testset(dataset_name)
+
 # Classify only one image
 image_no = 40477
+
 # Carregando a imagem de test
 img_name = 'train_%s.jpg'%image_no
 print(img_name)
 img = load_img(train_dir+'/'+img_name, target_size=targ_size)
 imgarray = img_to_array(img)
-imgarray = imgarray.reshape((1,)+imgarray.shape) # Alterando a dimensão, agora é um vetor unidimensional
+imgarray = imgarray.reshape((targ_size[0]**2)*3,) # Alterando a dimensão, agora é um vetor unidimensional
 imgarray = imgarray/255
 
 # Avaliando o modelo
-resultado = rfc.score(Xte, yte)
-print(resultado)
-
+score = rfc.score(Xte, yte)
 print('Amazon Dataset: ', targ_shape)
-print('Score_test: ', resultado)
+print('Score_test: ', score)
+
+# Tentando mostrar o resultado da previsao
+
+predicted = rfc.predict(imgarray)
+print(predicted)
