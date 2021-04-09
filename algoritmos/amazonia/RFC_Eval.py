@@ -67,7 +67,7 @@ for i in range(len(inv_labels_map)):
     all_labels.append(inv_labels_map[i])
 
 # Carregando o modelo
-rfc = joblib.load(base_dir+'/'+'RFC_%s.sav'%(targ_shape[0]))
+rfc = joblib.load(base_dir+'/'+'RFC_%s_500.sav'%(targ_shape[0]))
 
 # Carregando o testset inteiro
 Xte, yte = load_testset(dataset_name)
@@ -75,9 +75,10 @@ Xte, yte = load_testset(dataset_name)
 # Classifying all the images in the test set
 TP, FP, TN, FN = 0, 0, 0, 0
 for image_no in range(len(Xte), 2*len(Xte)):
+    print('progresso: %s de %s'%(image_no,2*len(Xte)))
     # Carregando a imagem de test
     img_name = 'train_%s.jpg'%image_no
-    print(img_name)
+    #print(img_name)
     img = load_img(train_dir+'/'+img_name, target_size=targ_size)
     imgarray = img_to_array(img)
     imgarray = imgarray.reshape(1,-1) # Alterando a dimensão, agora é um vetor unidimensional
@@ -85,7 +86,7 @@ for image_no in range(len(Xte), 2*len(Xte)):
 
     # Predicting the new image
     predicted_labels = rfc.predict(imgarray)
-    print(predicted_labels)
+    #print(predicted_labels)
 
     # Let`s get the image True Labels:
     true_labels = mapping['train_%s'%image_no]
@@ -100,7 +101,7 @@ for image_no in range(len(Xte), 2*len(Xte)):
     rfc_df = pd.DataFrame(all_labels, columns=['Labels'])
     rfc_df['True_labels'] = pd.Series(true_labels_list)
     rfc_df['Predicted_labels'] = pd.Series(predicted_labels[0])
-    print(rfc_df)
+    #print(rfc_df)
 
     # Calculando os TP, FP, TN, FN
     TP += len(rfc_df[(rfc_df['True_labels'] == 1) & (rfc_df['Predicted_labels'] == 1)])
@@ -109,10 +110,10 @@ for image_no in range(len(Xte), 2*len(Xte)):
     FN += len(rfc_df[(rfc_df['True_labels'] == 1) & (rfc_df['Predicted_labels'] == 0)])
 
 # definindo e calculando as métricas:
-print('Avg True Positives: ', TP)
-print('Avg False Positives: ', FP)
-print('Avg True Negatives: ', TN)
-print('Avg False Negatives: ', FN)
+# print('Avg True Positives: ', TP)
+# print('Avg False Positives: ', FP)
+# print('Avg True Negatives: ', TN)
+# print('Avg False Negatives: ', FN)
 # Precision
 precision = round(TP / (TP + FP), 3)
 print('Avg Precision: ', precision)
@@ -135,7 +136,14 @@ print('Tempo de Classificação:')
 print(tempo)
 
 file=open('RFC_Scores.txt','a')
-file.write('Tempo de ')
+file.write('Image Size: %s\n'%targ_shape[0])
+file.write('Evaluation time: %s\n'%tempo)
+file.write('Avg Precision: %s\n'%precision)
+file.write('Avg Recall: %s\n'%recall)
+file.write('Avg F1_Score: %s\n'%f1_score)
+file.write('----------------------------------------------------\n')
+file.close()
+
 
 ### Criar um arquivo para salvar todas as informações já que
 # Vou ter que re-treinar todos os RFC
