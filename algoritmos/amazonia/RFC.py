@@ -55,6 +55,8 @@ def evaluation(x, true):
 Xtr, Xte, Xval, ytr, yte, yval = load_dataset()
 rfc= RandomForestClassifier(n_estimators=100, verbose=1)
 rfc.fit(Xtr, ytr)
+
+
 # Validation set
 prev_val = evaluation(Xval, yval)
 score_val = rfc.score(Xval, yval)
@@ -62,6 +64,8 @@ score_val = rfc.score(Xval, yval)
 # Test set
 prev_te = evaluation(Xte, yte)
 score_te = rfc.score(Xte, yte)
+
+
 end_time = time.monotonic()
 print('Tempo do treinamento: ')
 print('\n')

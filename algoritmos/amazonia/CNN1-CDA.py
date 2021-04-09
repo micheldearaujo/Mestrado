@@ -26,7 +26,7 @@ train_fnames = os.listdir(train_dir)
 test_fnames = os.listdir(test_dir)
 
 # Definindo qual é o dataset que usaremos e qual o optimizer
-targ_shape = (64,64,3)
+targ_shape = (8,8,3)
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 opt = SGD(lr=0.01, momentum=0.9)
 
@@ -93,18 +93,14 @@ def define_model(in_shape=targ_shape, out_shape=17):
     modelo.add(Conv2D(int(targ_shape[0]/4), (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same', input_shape=targ_shape))
     modelo.add(Conv2D(int(targ_shape[0]/4), (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
     modelo.add(MaxPooling2D((2, 2)))
-    modelo.add(Dropout(0.2))
     modelo.add(Conv2D(int(targ_shape[0]/2), (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
     modelo.add(Conv2D(int(targ_shape[0]/2), (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
     modelo.add(MaxPooling2D((2, 2)))
-    modelo.add(Dropout(0.2))
     modelo.add(Conv2D(targ_shape[0], (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
     modelo.add(Conv2D(targ_shape[0], (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
     modelo.add(MaxPooling2D((2, 2)))
-    modelo.add(Dropout(0.2))
     modelo.add(Flatten())
     modelo.add(Dense(32, activation='relu', kernel_initializer='he_uniform'))
-    modelo.add(Dropout(0.5))
     modelo.add(Dense(out_shape, activation='sigmoid'))
     # Compilando
     modelo.compile(optimizer=opt, loss='binary_crossentropy', metrics=[fbeta])
@@ -168,7 +164,7 @@ def run():
     print('> loss=%.3f, fbeta=%.3f'%(loss, fbeta))
     #resultados = ['Loss: ', loss,'Fbeta: ', fbeta, 'Val_loss: ', val_loss, 'Val_Fbeta: ', fbeta_loss]
     # Definindo o nome do modelo
-    model_name = 'CNN1_CDA_%s_adam_.h5'%(targ_shape[0])
+    model_name = 'CNN1_CDA_%s_SGD_.h5'%(targ_shape[0])
     # Salvando o modelo para futuras previsoes
     modelo.save(base_dir+'/'+model_name)
     # Plotando as curvas de aprendizado

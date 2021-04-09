@@ -106,7 +106,7 @@ for i in range(len(inv_labels_map)):
 # Definindo o threshold (Tolerancia para classficiar como sim ou nao)
 threshold = 0.3
 # Classify only one image
-image_no = 40478
+image_no = 40477
 
 # Carregando a imagem de test
 img_name = 'train_%s.jpg'%image_no
