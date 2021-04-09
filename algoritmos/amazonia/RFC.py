@@ -65,8 +65,8 @@ prev_val = evaluation(Xval, yval)
 score_val = rfc.score(Xval, yval)
 
 # Test set
-prev_te = evaluation(Xte, yte)
-score_te = rfc.score(Xte, yte)
+#prev_te = evaluation(Xte, yte)
+#score_te = rfc.score(Xte, yte)
 
 
 end_time = time.monotonic()

@@ -124,7 +124,7 @@ def resumo(modelohis):
     # Salvando o gráfico
     filename = sys.argv[0].split('/')[-1]
     plt.tight_layout()
-    plt.savefig(base_dir+'/'+filename + '_plot_%s_adam.png'%(targ_shape[0]))
+    plt.savefig(base_dir+'/'+filename + '_plot_%s_SGD.png'%(targ_shape[0]))
     plt.close()
 
 

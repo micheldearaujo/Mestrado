@@ -118,8 +118,10 @@ imgarray = imgarray/255
 
 # realizando a previsao da imagem nova
 prediction = modelo.predict_proba(imgarray)
+
 # Criando uma lista com as classes verdadeiras da referida imagem
 true_classes = mapping['train_%s'%image_no]
+
 # Criando uma lista ordenada com as classes verdadeiras e todas as outras classes
 true_classes_list =[0 for i in range(len(classes))]
 for class_ in true_classes:
@@ -137,13 +139,13 @@ def enconder(probabilidade):
         return 1
     else:
         return 0
-df_labels['Predicted_label'] = df_labels['Predicted_proba'].apply(enconder)
+df_labels['Predicted_labels'] = df_labels['Predicted_proba'].apply(enconder)
 print(df_labels)
 
-TP = len(df_labels[(df_labels['True_labels'] == 1) & (df_labels['Predicted_label'] == 1)])
-FP = len(df_labels[(df_labels['True_labels'] == 0) & (df_labels['Predicted_label'] == 1)])
-TN = len(df_labels[(df_labels['True_labels'] == 0) & (df_labels['Predicted_label'] == 0)])
-FN = len(df_labels[(df_labels['True_labels'] == 1) & (df_labels['Predicted_label'] == 0)])
+TP = len(df_labels[(df_labels['True_labels'] == 1) & (df_labels['Predicted_labels'] == 1)])
+FP = len(df_labels[(df_labels['True_labels'] == 0) & (df_labels['Predicted_labels'] == 1)])
+TN = len(df_labels[(df_labels['True_labels'] == 0) & (df_labels['Predicted_labels'] == 0)])
+FN = len(df_labels[(df_labels['True_labels'] == 1) & (df_labels['Predicted_labels'] == 0)])
 print('True Positives: ',TP)
 print('False Positives: ',FP)
 print('True Negatives: ',TN)
@@ -160,11 +162,10 @@ print('Avg Recal: ', recall)
 f1_score = round(2 * (precision * recall) / (precision + recall), 3)
 print('Avg F1_Score:', f1_score)
 print('\n')
-print('As classes da imagem são: ')
-print(df_labels[df_labels['Predicted_label']==1]['Labels'])
+print('As classes previstas da imagem são: ')
+print(df_labels[df_labels['Predicted_labels']==1]['Labels'])
 print('\n')
 # Terminando a contagem do tempo
 end_time = time.monotonic()
 print('Tempo de Classificação: ')
-print('\n')
 print(timedelta(seconds=end_time - start_time))
