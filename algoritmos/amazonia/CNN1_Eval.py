@@ -114,7 +114,7 @@ for i in range(len(inv_labels_map)):
 thresholds = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 # Iniciando os contadores
 TPl, FPl, TNl, FNl = [], [], [], []
-precisionl, recalll, f1_scorel = [], [], []
+precisionl, recalll, accl, f1_scorel = [], [], [], []
 # Iniciando o loop para classificar todas as imagens
 for threshold in thresholds:
     TP, FP, TN, FN = 0, 0, 0, 0
@@ -128,7 +128,7 @@ for threshold in thresholds:
         imgarray = imgarray/255
 
         # realizando a previsao da imagem nova
-        multi_predicted = modelo.predict_proba(imgarray)
+        predicted_labels = modelo.predict_proba(imgarray)
 
         # Criando uma lista com as classes verdadeiras da referida imagem
         true_classes = mapping['train_%s'%image_no]
@@ -142,7 +142,7 @@ for threshold in thresholds:
         # Criando um dataframe para organizar todas as informações da classificacao da imagem
         df_labels = pd.DataFrame(classes, columns=['Labels'])
         df_labels['True_labels'] = pd.Series(true_classes_list)
-        df_labels['Predicted_proba'] = pd.Series(multi_predicted[0])
+        df_labels['Predicted_proba'] = pd.Series(predicted_labels[0])
 
         # Definindo como 1 as classes que possuem probabilidade maior que % e 0 o contrario
         def enconder(probabilidade):
@@ -154,10 +154,10 @@ for threshold in thresholds:
         #print(df_labels)
 
         # Calculando os TP, FP, TN, FN
-        TP += len(df_labels[(df_labels['True_labels'] == 1) & (df_labels['Predicted_label'] == 1)])
-        FP += len(df_labels[(df_labels['True_labels'] == 0) & (df_labels['Predicted_label'] == 1)])
-        TN += len(df_labels[(df_labels['True_labels'] == 0) & (df_labels['Predicted_label'] == 0)])
-        FN += len(df_labels[(df_labels['True_labels'] == 1) & (df_labels['Predicted_label'] == 0)])
+        TP += len(df_labels[(df_labels['True_labels'] == 1) & (df_labels['Predicted_labels'] == 1)])
+        FP += len(df_labels[(df_labels['True_labels'] == 0) & (df_labels['Predicted_labels'] == 1)])
+        TN += len(df_labels[(df_labels['True_labels'] == 0) & (df_labels['Predicted_labels'] == 0)])
+        FN += len(df_labels[(df_labels['True_labels'] == 1) & (df_labels['Predicted_labels'] == 0)])
 
     # definindo e calculando as métricas:
     print('Avg True Positives: ', TP)
@@ -167,12 +167,19 @@ for threshold in thresholds:
     # Precision
     precision = round(TP / (TP + FP), 3)
     print('Avg Precision: ', precision)
+
     # Recall (Sensibilidade ou True Positive Rate)
     recall = round(TP / (TP + FN), 3)
     print('Avg Recal: ', recall)
+
+    # Accuracy (Porcentagem de acertos no total)
+    acc = round((TP+TN)/(TP + FP + TN + FN), 3)
+    print('Avg Accuracy: ', acc)
+
     # F1 Score (Media ponderada entre precision e recall)
     f1_score = round(2 * (precision * recall) / (precision + recall), 3)
     print('Avg F1_Score:', f1_score)
+
     # Adicionado ao dicionario esta j-esima imagem
     TPl.append(TP)
     FPl.append(FP)
@@ -180,6 +187,7 @@ for threshold in thresholds:
     FNl.append(FN)
     precisionl.append(precision)
     recalll.append(recall)
+    accl.append(acc)
     f1_scorel.append(f1_score)
 
 # Criando um dataframe com todas as informacoes em funcao do threshold
@@ -189,6 +197,7 @@ dic = {'Avg TP':TPl,
        'Avg FN':FNl,
        'Avg Precision':precisionl,
        'Avg Recall':recalll,
+       'Avg Accuracy':accl,
        'Avg F1_score':f1_scorel}
 final_scores = pd.DataFrame(dic, index=thresholds)
 final_scores.to_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(targ_shape[0]))

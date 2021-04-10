@@ -24,12 +24,12 @@ train_fnames = os.listdir(train_dir)
 test_fnames = os.listdir(test_dir)
 
 # Definindo os parametros
-targ_shape = (16,16)
+targ_shape = (32,32)
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 estimators = 500
 
 # Importando os dados
-def load_dataset():
+def load_dataset(dataset_name):
     data = np.load(base_dir+'/'+dataset_name)
     X, y = data['arr_0'], data['arr_1']
     print('Dimensões: ')
@@ -52,7 +52,8 @@ def evaluation(x, true):
     return f1_score(true, ypred, average='samples')
 
 # Loading the dataset
-Xtr, Xval, ytr, yval = load_dataset()
+Xtr, Xval, ytr, yval = load_dataset(dataset_name)
+
 
 # Creating and fitting the model
 rfc = RandomForestClassifier(n_estimators=estimators, verbose=1, oob_score=True)
@@ -68,6 +69,7 @@ score_val = rfc.score(Xval, yval)
 
 
 end_time = time.monotonic()
+tempo = timedelta(seconds=end_time - start_time)
 print('Tempo do treinamento: ')
 print('\n')
 print(timedelta(seconds=end_time - start_time))
@@ -77,5 +79,13 @@ print('Score_validation: ', score_val)
 
 
 # Salvando o modelo
-filename = 'RFC_%s_%s.sav'%(targ_shape[0],500)
+filename = 'RFC_%s_%s.sav'%(targ_shape[0],estimators)
 joblib.dump(rfc, base_dir+'/'+filename)
+
+file=open(base_dir+'/'+'RFC_Training.txt','a')
+file.write('Image Size: %s_%s\n'%(targ_shape[0],estimators))
+file.write('Training time: %s\n'%tempo)
+file.write('F1_Score_Validation: %s\n'%prev_val)
+file.write('Score_Validation: %s\n'%score_val)
+file.write('----------------------------------------------------\n')
+file.close()

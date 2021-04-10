@@ -6,6 +6,7 @@ start_time=time.monotonic()
 targ_shape = (8,8,3)
 targ_size = targ_shape[:-1]
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
+estimators=100
 
 # Definindo o arquivo csv com os nomes dos arquivos e os labels
 mapping_csv = pd.read_csv(base_dir + '/train_classes.csv')
@@ -56,7 +57,7 @@ def create_file_mapping(mapping_csv):
 
 
 # Carregando o modelo
-rfc = joblib.load(base_dir+'/'+'RFC_%s.sav'%(targ_shape[0]))
+rfc = joblib.load(base_dir+'/'+'RFC_%s_%s.sav'%(targ_shape[0],estimators))
 
 # Carregando o testset inteiro
 #Xte, yte = load_testset(dataset_name)
@@ -113,5 +114,12 @@ print(rfc_df[rfc_df['Predicted_labels']==1]['Labels'])
 print('\n')
 
 end_time=time.monotonic()
+tempo = timedelta(seconds=end_time - start_time)
 print('Tempo de Classificação:')
-print(timedelta(seconds=end_time - start_time))
+print(tempo)
+
+file=open(base_dir+'/'+'RFC_ClassificationTime.txt','a')
+file.write('Image Size: %s_%s\n'%(targ_shape[0],estimators))
+file.write('Single prediction time: %s\n'%tempo)
+file.write('----------------------------------------------------\n')
+file.close()

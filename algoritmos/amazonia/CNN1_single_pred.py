@@ -155,11 +155,18 @@ print('False Negatives: ',FN)
 # Precision
 precision = round(TP / (TP + FP), 3)
 print('Avg Precision: ', precision)
+
 # Recall (Sensibilidade ou True Positive Rate)
 recall = round(TP / (TP + FN), 3)
 print('Avg Recal: ', recall)
+
 # F1 Score (Media ponderada entre precision e recall)
 f1_score = round(2 * (precision * recall) / (precision + recall), 3)
+
+# Overall Accuracy (Porcentagem de acertos sobre o total)
+acc = round((TP+TN)/(TP + FP + TN + FN), 3)
+
+print('Avg Accuracy: ', acc)
 print('Avg F1_Score:', f1_score)
 print('\n')
 print('As classes previstas da imagem são: ')

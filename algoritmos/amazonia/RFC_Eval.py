@@ -3,10 +3,10 @@ from utils import *
 # -----------------------------------------------
 start_time=time.monotonic()
 # Definindo os parametros
-targ_shape = (8,8,3)
+targ_shape = (16,16,3)
 targ_size = targ_shape[:-1]
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
-estimators=100
+estimators=500
 
 # -------------------------------------------------
 # Definindo o arquivo csv com os nomes dos arquivos e os labels
@@ -68,7 +68,7 @@ for i in range(len(inv_labels_map)):
     all_labels.append(inv_labels_map[i])
 
 # Carregando o modelo
-rfc = joblib.load(base_dir+'/'+'RFC_%s_500.sav'%(targ_shape[0]))
+rfc = joblib.load(base_dir+'/'+'RFC_%s_%s.sav'%(targ_shape[0],estimators))
 
 # Carregando o testset inteiro
 Xte, yte = load_testset(dataset_name)
@@ -115,36 +115,37 @@ for image_no in range(len(Xte), 2*len(Xte)):
 # print('Avg False Positives: ', FP)
 # print('Avg True Negatives: ', TN)
 # print('Avg False Negatives: ', FN)
+
 # Precision
 precision = round(TP / (TP + FP), 3)
 print('Avg Precision: ', precision)
+
 # Recall (Sensibilidade ou True Positive Rate)
 recall = round(TP / (TP + FN), 3)
 print('Avg Recal: ', recall)
+
 # F1 Score (Media ponderada entre precision e recall)
 f1_score = round(2 * (precision * recall) / (precision + recall), 3)
 print('Avg F1_Score:', f1_score)
 
-print('As classes previstas da imagem são: ')
-print(rfc_df[rfc_df['Predicted_labels']==1]['Labels'])
-print('\n')
+# Overall Accuracy (Porcentagem de acertos sobre o total)
+acc = round((TP+TN)/(TP + FP + TN + FN), 3)
+print('Avg Accuracy: ', acc)
+
 
 
 #----------------------------------------------------
 end_time=time.monotonic()
 tempo = timedelta(seconds=end_time - start_time)
-print('Tempo de Classificação:')
+print('Tempo de Evaluation:')
 print(tempo)
 
-file=open('RFC_Scores.txt','a')
-file.write('Image Size: %s_%s\n'%(targ_shape[0],n_estimators))
+file=open(base_dir+'/'+'RFC_Scores.txt','a')
+file.write('Image Size: %s_%s\n'%(targ_shape[0],estimators))
 file.write('Evaluation time: %s\n'%tempo)
 file.write('Avg Precision: %s\n'%precision)
 file.write('Avg Recall: %s\n'%recall)
+file.write('Avg Accuracy: %s\n'%acc)
 file.write('Avg F1_Score: %s\n'%f1_score)
 file.write('----------------------------------------------------\n')
 file.close()
-
-
-### Criar um arquivo para salvar todas as informações já que
-# Vou ter que re-treinar todos os RFC
