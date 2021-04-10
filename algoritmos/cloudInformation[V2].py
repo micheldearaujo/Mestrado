@@ -140,7 +140,7 @@ parser.add_argument('--dispositivo', action = 'store', dest = 'd',
 parser.add_argument('--workload', action = 'store', dest = 'w', required = True,
                            help = '0.1, 0.5 or 1.0')
 
-arguments = parser.parse_args()
+arguments = parser.parse_args(['Cloud','0.1'])
 
 criarCSV(arguments.d, arguments.w) #Chama a função para criar o cvs
 

@@ -44,11 +44,6 @@ def load_dataset(dataset_name):
     return Xtr, Xval, ytr, yval
 
 
-def evaluation(x, true):
-    ypred = rfc.predict(x)
-    return f1_score(true, ypred, average='samples')
-
-
 def create_train_model(estimators):
     start_time = time.monotonic()
     # Creating and fitting the model
@@ -56,7 +51,8 @@ def create_train_model(estimators):
     rfc.fit(Xtr, ytr)
 
     # Validation set
-    prev_val = evaluation(Xval, yval)
+    pred = rfc.predict(Xval)
+    prev_val = f1_score(Xval, pred, average='samples')
     score_val = rfc.score(Xval, yval)
 
     # Test set

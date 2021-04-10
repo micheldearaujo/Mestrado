@@ -11,7 +11,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import Dense, Conv2D, MaxPooling2D, Flatten, Dropout
 from tensorflow.keras.optimizers import SGD
-from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import time
 from datetime import timedelta
 
@@ -131,13 +131,17 @@ def run():
     # Definindo o modelo
     modelo = define_model()
     # Fitando
+    model_name = 'CNN1_CDAtest_%s_SGD.h5' % (targ_shape[0])
+    checkpoint = ModelCheckpoint(base_dir+'/'+model_name, monitor='val_loss', save_best_only=True,
+                                 mode='auto', period=1)
     early_stop = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=25)
     modelofit = modelo.fit(train_it,
                                      steps_per_epoch=len(train_it),
                                      validation_data=val_it,
                                      validation_steps=len(val_it),
                                      epochs=200,
-                                     verbose=1, callbacks=[early_stop])
+                                     verbose=1,
+                           callbacks=[early_stop,checkpoint])
     # Avaliando o modelo
     loss, fbeta = modelo.evaluate(val_it,
                                             steps=len(val_it),
