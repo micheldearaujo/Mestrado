@@ -89,8 +89,6 @@ def define_model(in_shape=targ_shape, out_shape=17):
     return modelo
 
 
-
-
 # Plotando o resultado do treinamento
 def resumo(modelohis):
     # Plotando o loss
@@ -157,14 +155,22 @@ def run():
     modelo.save(base_dir+'/'+model_name)
     # Plotando as curvas de aprendizado
     resumo(modelofit)
+    return loss, fbeta
 
 
 
 
 # Por fim, rodando o modelo
-run()
+loss, fbeta = run()
 end_time = time.monotonic()
+tempo = timedelta(seconds=end_time - start_time)
 print('Tempo do treinamento: ')
-print('\n')
-print(timedelta(seconds=end_time - start_time))
+print(tempo)
 
+file = open(base_dir + '/' + 'CNN_Training.txt', 'a')
+file.write('Image Size: %s\n' % targ_shape[0])
+file.write('Training time: %s\n' % tempo)
+file.write('Loss: %s\n' %loss)
+file.write('Fbeta_score: %s\n' % fbeta)
+file.write('----------------------------------------------------\n')
+file.close()
