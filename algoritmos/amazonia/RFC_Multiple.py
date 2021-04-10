@@ -83,6 +83,7 @@ def create_train_model(estimators):
     file.write('Score_Validation: %s\n' % score_val)
     file.write('----------------------------------------------------\n')
     file.close()
+    return rfc
 
 # Calling the functions multiple times to train multiple models while we sleep
 
@@ -93,7 +94,7 @@ estimators = 500
 
 # Loading the dataset
 Xtr, Xval, ytr, yval = load_dataset(dataset_name)
-create_train_model(estimators)
+rfc = create_train_model(estimators)
 
 # Definindo os parametros
 targ_shape = (64, 64)
@@ -102,5 +103,5 @@ estimators = 500
 
 # Loading the dataset
 Xtr, Xval, ytr, yval = load_dataset(dataset_name)
-create_train_model(estimators)
+rfc = create_train_model(estimators)
 

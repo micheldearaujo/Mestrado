@@ -23,7 +23,7 @@ test_fnames = os.listdir(test_dir)
 
 # Parâmetros do modelo
 opt = SGD(lr=0.01, momentum=0.9)
-targ_shape = (8,8,3)
+targ_shape = (16,16,3)
 targ_size = targ_shape[:-1]
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 model_name = 'CNN1_CDA_%s_SGD.h5'%(targ_shape[0])
@@ -150,7 +150,7 @@ for threshold in thresholds:
                 return 1
             else:
                 return 0
-        df_labels['Predicted_label'] = df_labels['Predicted_proba'].apply(enconder)
+        df_labels['Predicted_labels'] = df_labels['Predicted_proba'].apply(enconder)
         #print(df_labels)
 
         # Calculando os TP, FP, TN, FN
@@ -204,6 +204,6 @@ final_scores.to_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(targ_shape[0]))
 
 
 end_time = time.monotonic()
-print('Tempo de Classificação: ')
+print('Tempo de Evaluation: ')
 print('\n')
 print(timedelta(seconds=end_time - start_time))

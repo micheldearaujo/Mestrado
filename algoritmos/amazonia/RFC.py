@@ -26,7 +26,7 @@ test_fnames = os.listdir(test_dir)
 # Definindo os parametros
 targ_shape = (32,32)
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
-estimators = 500
+estimators = 100
 
 # Importando os dados
 def load_dataset(dataset_name):
