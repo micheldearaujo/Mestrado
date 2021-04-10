@@ -58,6 +58,9 @@ df32['Target_size'] = df32['Avg TP'].apply(create_target_size32)
 df64['Target_size'] = df64['Avg TP'].apply(create_target_size64)
 #df128['Target_size'] = df128['Avg TP'].apply(create_target_size128)
 df = pd.concat([df8,df16,df32,df64], axis =0)
+df = df.reset_index()
+df.columns = ['Threshold', 'Avg TP', 'Avg FP', 'Avg TN', 'Avg FN', 'Avg Precision',
+       'Avg Recall', 'Avg Accuracy', 'Avg F1_score', 'Target_size']
 df.to_csv(base_dir+'/'+'CNN_Scores_ALL.csv')
 
 sns.jointplot(data=df, x='Avg Recall', y='Avg Precision', hue='Target_size',xlim=(0.2,1.1), ylim=(0.2,1.1))

@@ -15,5 +15,7 @@ test_fnames = os.listdir(test_dir)
 
 
 scores = pd.read_csv(base_dir+'/'+'CNN_Scores_ALL.csv', index_col='Unnamed: 0')
-sns.jointplot(data=scores, x='Avg Recall', y='Avg Precision', hue='Target_size',xlim=(0.2,1.1), ylim=(0.2,1.1))
+#sns.jointplot(data=scores, x='Avg Recall', y='Avg Precision', hue='Target_size',xlim=(0.2,1.1), ylim=(0.2,1.1))
+sns.jointplot(data=scores, x='Threshold', y='Avg Accuracy', hue='Target_size')
+
 plt.show()
