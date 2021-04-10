@@ -81,11 +81,14 @@ def define_model(in_shape=targ_shape, out_shape=17):
     modelo.add(Conv2D(targ_shape[0], (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
     modelo.add(MaxPooling2D((2, 2)))
     modelo.add(Flatten())
-    modelo.add(Dense(32, activation='relu', kernel_initializer='he_uniform'))
+    modelo.add(Dense(targ_shape[0], activation='relu', kernel_initializer='he_uniform'))
     modelo.add(Dense(out_shape, activation='sigmoid'))
     # Compilando
+    # Carregando os weights em caso de interrupção anterior:
     modelo.compile(optimizer=opt, loss='binary_crossentropy', metrics=[fbeta])
     return modelo
+
+
 
 
 # Plotando o resultado do treinamento
@@ -131,9 +134,9 @@ def run():
     # Definindo o modelo
     modelo = define_model()
     # Fitando
-    model_name = 'CNN1_CDAtest_%s_SGD.h5' % (targ_shape[0])
-    checkpoint = ModelCheckpoint(base_dir+'/'+model_name, monitor='val_loss', save_best_only=True,
-                                 mode='auto', period=1)
+    model_name = 'CNN1_CDA_%s_SGD.h5' % (targ_shape[0])
+    checkpoint = ModelCheckpoint(base_dir+'/'+model_name, monitor='loss', save_best_only=True,
+                                 mode='min', save_freq=1, save_weights_only=True)
     early_stop = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=25)
     modelofit = modelo.fit(train_it,
                                      steps_per_epoch=len(train_it),
