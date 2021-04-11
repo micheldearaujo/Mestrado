@@ -53,7 +53,7 @@ def get_size(bytes, suffix="B"):
 
 #-----------------------------------------------------------------------
 
-def executeMonitoring():
+def executeMonitoring(x,y):
     
     name = "monitoring" + x + "_" + y + ".csv"
     
@@ -88,8 +88,8 @@ def executeMonitoring():
         print(f"Available: {get_size(svmem.available)}")
         print(f"Used: {get_size(svmem.used)}")
         print(f"Percentage: {svmem.percent}%")
-        print(f"Buffers: {get_size(svmem.buffers)}")
-        print(f"Cached: {get_size(svmem.cached)}")
+        #print(f"Buffers: {get_size(svmem.buffers)}")
+        #print(f"Cached: {get_size(svmem.cached)}")
         print("="*5, "SWAP", "="*5)
         
         # get the swap memory details (if exists)
@@ -123,7 +123,7 @@ def executeMonitoring():
       
         writer.writerow((str(currentDT),psutil.cpu_percent(),
                         svmem.total, svmem.available, svmem.used, svmem.percent,
-                         svmem.buffers, svmem.cached,
+                         #svmem.buffers, svmem.cached,
                         swap.total, swap.free, swap.used,swap.percent,
                         partition_usage1.total, partition_usage1.used, partition_usage1.free, partition_usage1.percent,
                         disk_io.read_bytes, disk_io.write_bytes))
