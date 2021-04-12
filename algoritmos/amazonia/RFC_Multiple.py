@@ -15,8 +15,8 @@ from datetime import timedelta
 import joblib
 
 # Definindo o caminho dos diretorios
-# base_dir = '/home/michel/PycharmProjects/data/amazonia' # Ubuntu
-base_dir = 'D:/michel/data/amazonia/kaggle'
+base_dir = '/home/michel/data/amazonia/kaggle' # Ubuntu
+#base_dir = 'D:/michel/data/amazonia/kaggle'
 train_dir = os.path.join(base_dir, 'train-jpg')
 test_dir = os.path.join(base_dir, 'test-jpg')
 train_fnames = os.listdir(train_dir)
@@ -52,7 +52,7 @@ def create_train_model(estimators):
 
     # Validation set
     pred = rfc.predict(Xval)
-    prev_val = f1_score(Xval, pred, average='samples')
+    #prev_val = f1_score(Xval, pred, average='samples')
     score_val = rfc.score(Xval, yval)
 
     # Test set
@@ -75,7 +75,7 @@ def create_train_model(estimators):
     file = open(base_dir + '/' + 'RFC_Training.txt', 'a')
     file.write('Image Size: %s_%s\n' % (targ_shape[0], estimators))
     file.write('Training time: %s\n' % tempo)
-    file.write('F1_Score_Validation: %s\n' % prev_val)
+    #file.write('F1_Score_Validation: %s\n' % prev_val)
     file.write('Score_Validation: %s\n' % score_val)
     file.write('----------------------------------------------------\n')
     file.close()
@@ -84,9 +84,27 @@ def create_train_model(estimators):
 # Calling the functions multiple times to train multiple models while we sleep
 
 # Definindo os parametros
+targ_shape = (8, 8)
+dataset_name = 'amazon_data_%s.npz' % (targ_shape[0])
+estimators = 100
+
+# Loading the dataset
+Xtr, Xval, ytr, yval = load_dataset(dataset_name)
+rfc = create_train_model(estimators)
+
+# Definindo os parametros
+targ_shape = (16, 16)
+dataset_name = 'amazon_data_%s.npz' % (targ_shape[0])
+estimators = 100
+
+# Loading the dataset
+Xtr, Xval, ytr, yval = load_dataset(dataset_name)
+rfc = create_train_model(estimators)
+
+# Definindo os parametros
 targ_shape = (32, 32)
 dataset_name = 'amazon_data_%s.npz' % (targ_shape[0])
-estimators = 500
+estimators = 100
 
 # Loading the dataset
 Xtr, Xval, ytr, yval = load_dataset(dataset_name)
@@ -95,9 +113,18 @@ rfc = create_train_model(estimators)
 # Definindo os parametros
 targ_shape = (64, 64)
 dataset_name = 'amazon_data_%s.npz' % (targ_shape[0])
-estimators = 500
+estimators = 100
 
 # Loading the dataset
 Xtr, Xval, ytr, yval = load_dataset(dataset_name)
 rfc = create_train_model(estimators)
 
+
+# Definindo os parametros
+targ_shape = (128, 128)
+dataset_name = 'amazon_data_%s.npz' % (targ_shape[0])
+estimators = 100
+
+# Loading the dataset
+Xtr, Xval, ytr, yval = load_dataset(dataset_name)
+rfc = create_train_model(estimators)

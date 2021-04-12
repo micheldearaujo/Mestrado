@@ -14,8 +14,8 @@ from datetime import timedelta
 start_time = time.monotonic()
 
 # Definindo o caminho dos diretorios
-#base_dir = '/home/michel/data/amazonia/kaggle' # Ubuntu
-base_dir = 'D:/michel/data/amazonia/kaggle' # Windows
+base_dir = '/home/michel/data/amazonia/kaggle' # Ubuntu
+#base_dir = 'D:/michel/data/amazonia/kaggle' # Windows
 train_dir = os.path.join(base_dir, 'train-jpg')
 test_dir = os.path.join(base_dir, 'test-jpg')
 train_fnames = os.listdir(train_dir)
@@ -128,7 +128,7 @@ for threshold in thresholds:
         imgarray = imgarray/255
 
         # realizando a previsao da imagem nova
-        predicted_labels = modelo.predict_proba(imgarray)
+        predicted_labels = modelo.predict(imgarray)
 
         # Criando uma lista com as classes verdadeiras da referida imagem
         true_classes = mapping['train_%s'%image_no]
@@ -200,7 +200,7 @@ dic = {'Avg TP':TPl,
        'Avg Accuracy':accl,
        'Avg F1_score':f1_scorel}
 final_scores = pd.DataFrame(dic, index=thresholds)
-final_scores.to_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(targ_shape[0]))
+final_scores.to_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(targ_shape[0]), index=False)
 
 
 end_time = time.monotonic()

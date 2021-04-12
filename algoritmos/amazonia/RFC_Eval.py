@@ -3,7 +3,7 @@ from utils import *
 # -----------------------------------------------
 start_time=time.monotonic()
 # Definindo os parametros
-targ_shape = (16,16,3)
+targ_shape = (128,128,3)
 targ_size = targ_shape[:-1]
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 estimators=500
