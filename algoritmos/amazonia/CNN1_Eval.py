@@ -23,7 +23,7 @@ test_fnames = os.listdir(test_dir)
 
 # Parâmetros do modelo
 opt = SGD(lr=0.01, momentum=0.9)
-targ_shape = (64,64,3)
+targ_shape = (8, 8, 3)
 targ_size = targ_shape[:-1]
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 model_name = 'CNN1_CDA_%s_SGD.h5'%(targ_shape[0])
@@ -200,7 +200,7 @@ dic = {'Avg TP':TPl,
        'Avg Accuracy':accl,
        'Avg F1_score':f1_scorel}
 final_scores = pd.DataFrame(dic, index=thresholds)
-final_scores.to_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(targ_shape[0]), index=False)
+final_scores.to_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(targ_shape[0]))
 
 
 end_time = time.monotonic()

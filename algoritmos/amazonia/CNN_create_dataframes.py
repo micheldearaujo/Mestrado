@@ -6,8 +6,8 @@ import os
 from tensorflow.keras.optimizers import SGD
 
 # Definindo o caminho dos diretorios
-#base_dir = '/home/michel/PycharmProjects/data/amazonia' # Ubuntu
-base_dir = 'D:/michel/data/amazonia/kaggle'
+base_dir = '/home/michel/data/amazonia/kaggle' # Ubuntu
+#base_dir = 'D:/michel/data/amazonia/kaggle'
 train_dir = os.path.join(base_dir, 'train-jpg')
 test_dir = os.path.join(base_dir, 'test-jpg')
 train_fnames = os.listdir(train_dir)
@@ -20,10 +20,10 @@ targ_size = targ_shape[:-1]
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 model_name = 'CNN1_CDA_%s_SGD.h5'%(targ_shape[0])
 
-df8 = pd.read_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(8), index_col='Unnamed: 0')
-df16 = pd.read_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(16), index_col='Unnamed: 0')
-df32 = pd.read_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(32), index_col='Unnamed: 0')
-df64 = pd.read_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(64), index_col='Unnamed: 0')
+df8 = pd.read_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(8))
+df16 = pd.read_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(16))
+df32 = pd.read_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(32))
+df64 = pd.read_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(64))
 #df128 = pd.read_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(128), index_col='Unnamed: 0')
 
 plt.figure(1)
@@ -58,14 +58,4 @@ df32['Target_size'] = df32['Avg TP'].apply(create_target_size32)
 df64['Target_size'] = df64['Avg TP'].apply(create_target_size64)
 #df128['Target_size'] = df128['Avg TP'].apply(create_target_size128)
 df = pd.concat([df8,df16,df32,df64], axis =0)
-df = df.reset_index()
-df.columns = ['Threshold', 'Avg TP', 'Avg FP', 'Avg TN', 'Avg FN', 'Avg Precision',
-       'Avg Recall', 'Avg Accuracy', 'Avg F1_score', 'Target_size']
 df.to_csv(base_dir+'/'+'CNN_Scores_ALL.csv', index=False)
-
-sns.jointplot(data=df, x='Avg Recall', y='Avg Precision', hue='Target_size',xlim=(0.2,1.1), ylim=(0.2,1.1))
-plt.title('Precision Vs Recall')
-plt.xlabel('Recall')
-plt.ylabel('Precision')
-plt.legend()
-plt.show()
