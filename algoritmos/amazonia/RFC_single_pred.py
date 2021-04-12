@@ -3,10 +3,10 @@ from utils import *
 
 start_time=time.monotonic()
 # Definindo os parametros
-targ_shape = (8,8,3)
+targ_shape = (16, 16,3)
 targ_size = targ_shape[:-1]
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
-estimators=100
+estimators=500
 
 # Definindo o arquivo csv com os nomes dos arquivos e os labels
 mapping_csv = pd.read_csv(base_dir + '/train_classes.csv')
@@ -63,7 +63,7 @@ rfc = joblib.load(base_dir+'/'+'RFC_%s_%s.sav'%(targ_shape[0],estimators))
 #Xte, yte = load_testset(dataset_name)
 
 # Classify only one image
-image_no = 40474
+image_no = 40469
 
 # Carregando a imagem de test
 img_name = 'train_%s.jpg'%image_no
