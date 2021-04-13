@@ -6,8 +6,8 @@ import os
 from tensorflow.keras.optimizers import SGD
 
 # Definindo o caminho dos diretorios
-base_dir = '/home/michel/data/amazonia/kaggle' # Ubuntu
-#base_dir = 'D:/michel/data/amazonia/kaggle'
+#base_dir = '/home/michel/data/amazonia/kaggle' # Ubuntu
+base_dir = 'D:/michel/data/amazonia/kaggle'
 train_dir = os.path.join(base_dir, 'train-jpg')
 test_dir = os.path.join(base_dir, 'test-jpg')
 train_fnames = os.listdir(train_dir)
