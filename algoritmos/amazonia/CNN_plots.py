@@ -20,33 +20,48 @@ cnn = pd.read_csv(base_dir+'/'+'CNN_Scores_ALL.csv')
 # sns.jointplot(data=scores, x='Avg Recall', y='Avg Precision', hue='Target_size',xlim=(0.2,1.1), ylim=(0.2,1.1))
 # sns.jointplot(data=scores, x='Avg Recall', y='Avg Precision', hue='Threshold')
 
+markers =['o','*','v','s','X','D','+','>','p']
+sizes=['8x8','16x16','32x32','64x64']
+linestyles=['dashed','solid','dashdot','dotted']
+
+
 # Precision Vs Recall Vs Image Size
 fig0, axs = plt.subplots(1)
 axs.set_xlabel('Avg Recall')
 axs.set_ylabel('Avg Precision')
 axs.set_title('Precision and Recall As Function of Image Size and Threshold for CNN')
-axs.plot(cnn[cnn['Target size']=='8x8']['Avg Recall'],
-         cnn[cnn['Target size']=='8x8']['Avg Precision'],
-         marker='o',
-         label='8x8')
-axs.plot(cnn[cnn['Target size']=='16x16']['Avg Recall'],
-         cnn[cnn['Target size']=='16x16']['Avg Precision'],
-         marker='*',
-         label='16x16', markersize=10)
-axs.plot(cnn[cnn['Target size']=='32x32']['Avg Recall'],
-         cnn[cnn['Target size']=='32x32']['Avg Precision'],
-         marker='^',
-         label='32x32')
-axs.plot(cnn[cnn['Target size']=='64x64']['Avg Recall'],
-         cnn[cnn['Target size']=='64x64']['Avg Precision'],
-         marker='+',
-         label='64x64', markersize=10)
+# axs.plot(cnn[cnn['Target size']=='8x8']['Avg Recall'],
+#          cnn[cnn['Target size']=='8x8']['Avg Precision'],
+#          ls='dashed',
+#          label='8x8')
+
+
+# Trying the new thing
+# Threshold X Image Size
+for k in range(len(sizes)):
+    axs.plot(cnn[cnn['Target size']==sizes[k]]['Avg Recall'],
+            cnn[cnn['Target size']==sizes[k]]['Avg Precision'],
+             ls=linestyles[k],
+             label=sizes[k])
+
+
+# axs.plot(cnn[cnn['Target size']=='16x16']['Avg Recall'],
+#          cnn[cnn['Target size']=='16x16']['Avg Precision'],
+#          ls='solid',
+#          label='16x16')
+# axs.plot(cnn[cnn['Target size']=='32x32']['Avg Recall'],
+#          cnn[cnn['Target size']=='32x32']['Avg Precision'],
+#          ls='dashdot',
+#          label='32x32')
+# axs.plot(cnn[cnn['Target size']=='64x64']['Avg Recall'],
+#          cnn[cnn['Target size']=='64x64']['Avg Precision'],
+#          ls='dotted',
+#          label='64x64')
 axs.grid(which='major', linestyle='--')
-plt.xlim(0,1)
+plt.xlim(0.29,1)
 axs.grid(which='minor', linestyle=':')
 axs.legend(title='Image size')
 plt.show()
-
 
 # Accuracy versus threshold
 
@@ -71,9 +86,9 @@ axs.plot(cnn[cnn['Target size']=='64x64']['Threshold'],
          marker='+',
          label='64x64', markersize=10)
 axs.grid(which='major', linestyle='--')
-plt.xlim(0,1)
+plt.xlim(0.09,.91)
 axs.grid(which='minor', linestyle=':')
-axs.legend(title='Image size', loc='best')
+axs.legend(title='Image size', loc=4)
 plt.show()
 
 fig2, axs = plt.subplots(1)
@@ -117,7 +132,7 @@ axs.plot(cnn[cnn['Threshold']==0.9]['Avg Recall'],
          marker='o',
          label=0.9)
 axs.grid(which='major', linestyle='--')
-plt.xlim(0,1)
+plt.xlim(0.29,1)
 axs.grid(which='minor', linestyle=':')
-axs.legend(title='Threshold')
+axs.legend(title='Threshold', loc=3)
 plt.show()

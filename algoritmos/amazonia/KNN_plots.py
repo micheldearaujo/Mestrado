@@ -16,12 +16,29 @@ test_fnames = os.listdir(test_dir)
 
 # o melhor é 64x64
 
-scores = pd.read_csv(base_dir+'/'+'KNN_Scores_ALL.csv')
-sns.set_style('whitegrid')
-#fig = sns.FacetGrid(data = scores, col='n_trees', hue='Target_size', palette = 'icefire')
-#fig.map(sns.scatterplot, 'Avg Recall', 'Avg Precision', s= 100)
-sns.jointplot(data=scores, x='Avg Recall', y='Avg Precision', hue='Target_size',s =100)
-# sns.jointplot(data=scores, x='Avg Recall', y='Avg Precision', hue='Target_size', palette='icefire', ax=axs[1])
-#fig.add_legend()
-
+knn = pd.read_csv(base_dir+'/'+'KNN_Scores_ALL.csv')
+fig0, axs = plt.subplots(1)
+axs.set_xlabel('Avg Recall')
+axs.set_ylabel('Avg Precision')
+axs.set_title('Precision and Recall As Function of Image Size and Threshold for CNN')
+axs.plot(knn[knn['Target size']=='8x8']['Avg Recall'],
+         knn[knn['Target size']=='8x8']['Avg Precision'],
+         marker='o',
+         label='8x8')
+axs.plot(knn[knn['Target size']=='16x16']['Avg Recall'],
+         knn[knn['Target size']=='16x16']['Avg Precision'],
+         marker='*',
+         label='16x16', markersize=10)
+axs.plot(knn[knn['Target size']=='32x32']['Avg Recall'],
+         knn[knn['Target size']=='32x32']['Avg Precision'],
+         marker='^',
+         label='32x32')
+axs.plot(knn[knn['Target size']=='64x64']['Avg Recall'],
+         knn[knn['Target size']=='64x64']['Avg Precision'],
+         marker='+',
+         label='64x64', markersize=10)
+axs.grid(which='major', linestyle='--')
+plt.xlim(0,1)
+axs.grid(which='minor', linestyle=':')
+axs.legend(title='Image size')
 plt.show()
