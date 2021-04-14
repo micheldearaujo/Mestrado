@@ -20,25 +20,29 @@ knn = pd.read_csv(base_dir+'/'+'KNN_Scores_ALL.csv')
 fig0, axs = plt.subplots(1)
 axs.set_xlabel('Avg Recall')
 axs.set_ylabel('Avg Precision')
-axs.set_title('Precision and Recall As Function of Image Size and Threshold for CNN')
-axs.plot(knn[knn['Target size']=='8x8']['Avg Recall'],
+axs.set_title('Precision and Recall As Function of Image Size and Threshold for KNN')
+axs.plot(knn['Avg Recall'],
+         knn['Avg Precision'],
+         c='black')
+
+axs.scatter(knn[knn['Target size']=='8x8']['Avg Recall'],
          knn[knn['Target size']=='8x8']['Avg Precision'],
-         marker='o',
-         label='8x8')
-axs.plot(knn[knn['Target size']=='16x16']['Avg Recall'],
+         marker='D',
+         label='16x16', s=80)
+axs.scatter(knn[knn['Target size']=='16x16']['Avg Recall'],
          knn[knn['Target size']=='16x16']['Avg Precision'],
-         marker='*',
-         label='16x16', markersize=10)
-axs.plot(knn[knn['Target size']=='32x32']['Avg Recall'],
+         marker='X',
+         label='16x16', s=80)
+axs.scatter(knn[knn['Target size']=='32x32']['Avg Recall'],
          knn[knn['Target size']=='32x32']['Avg Precision'],
-         marker='^',
-         label='32x32')
-axs.plot(knn[knn['Target size']=='64x64']['Avg Recall'],
+         marker='>',
+         label='32x32', s=80)
+axs.scatter(knn[knn['Target size']=='64x64']['Avg Recall'],
          knn[knn['Target size']=='64x64']['Avg Precision'],
-         marker='+',
-         label='64x64', markersize=10)
+         marker='v',
+         label='64x64', s=80)
 axs.grid(which='major', linestyle='--')
-plt.xlim(0,1)
+plt.xlim(0.535,0.5525)
 axs.grid(which='minor', linestyle=':')
 axs.legend(title='Image size')
 plt.show()
