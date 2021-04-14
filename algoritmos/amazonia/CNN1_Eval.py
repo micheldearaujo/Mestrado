@@ -14,8 +14,8 @@ from datetime import timedelta
 start_time = time.monotonic()
 
 # Definindo o caminho dos diretorios
-base_dir = '/home/michel/data/amazonia/kaggle' # Ubuntu
-#base_dir = 'D:/michel/data/amazonia/kaggle' # Windows
+#base_dir = '/home/michel/data/amazonia/kaggle' # Ubuntu
+base_dir = 'D:/michel/data/amazonia/kaggle' # Windows
 train_dir = os.path.join(base_dir, 'train-jpg')
 test_dir = os.path.join(base_dir, 'test-jpg')
 train_fnames = os.listdir(train_dir)
@@ -23,7 +23,7 @@ test_fnames = os.listdir(test_dir)
 
 # Parâmetros do modelo
 opt = SGD(lr=0.01, momentum=0.9)
-targ_shape = (8, 8, 3)
+targ_shape = (32, 32, 3)
 targ_size = targ_shape[:-1]
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 model_name = 'CNN1_CDA_%s_SGD.h5'%(targ_shape[0])

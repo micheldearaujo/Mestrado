@@ -24,10 +24,29 @@ cores=['blue','orange','green','red']
 
 
 # Precision Vs Recall Vs Image Size
+
+SMALL_SIZE = 22
+MEDIUM_SIZE = 22
+BIGGER_SIZE = 22
+plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=24)     # fontsize of the axes title
+plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+plt.rcParams['xtick.top'] = plt.rcParams['xtick.labeltop'] = False
+plt.rcParams['xtick.bottom'] = plt.rcParams['xtick.labelbottom'] = True
+plt.rcParams['ytick.left'] = plt.rcParams['ytick.labelleft'] = True
+plt.rcParams['ytick.right'] = plt.rcParams['ytick.labelright'] = False
+
+
 fig0, axs = plt.subplots()
 axs.set_xlabel('Avg Recall')
 axs.set_ylabel('Avg Precision')
 axs.set_title('Precision and Recall As Function of Image Size and Threshold for CNN')
+
+
 
 
 # Threshold X Image Size
@@ -38,6 +57,10 @@ for k in range(len(sizes)):
              label=sizes[k])
 
 axs2=axs.twinx()
+plt.rcParams['xtick.top'] = plt.rcParams['xtick.labeltop'] = False
+plt.rcParams['xtick.bottom'] = plt.rcParams['xtick.labelbottom'] = True
+plt.rcParams['ytick.left'] = plt.rcParams['ytick.labelleft'] = True
+plt.rcParams['ytick.right'] = plt.rcParams['ytick.labelright'] = False
 for k in range(0,9):
     x = (cnn[cnn['Target size']=='8x8']['Avg Recall'][0+k],
          cnn[cnn['Target size']=='16x16']['Avg Recall'][9+k],
@@ -55,7 +78,7 @@ for k in range(0,9):
 axs.grid(which='major', linestyle='--')
 plt.xlim(0.29,1)
 axs.grid(which='minor', linestyle=':')
-axs.legend(title='Image size', loc=6)
+axs.legend(title='Image size', loc=8)
 axs2.grid(which='major', linestyle='--')
 axs2.grid(which='minor', linestyle=':')
 axs2.legend(title='Threshold', loc=3)
