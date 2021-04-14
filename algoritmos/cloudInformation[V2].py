@@ -90,9 +90,11 @@ def executeMonitoring(x,y):
         print(f"Percentage: {svmem.percent}%")
         #print(f"Buffers: {get_size(svmem.buffers)}")
         #print(f"Cached: {get_size(svmem.cached)}")
-        print("="*5, "SWAP", "="*5)
-        
+
+        print('\n')
+
         # get the swap memory details (if exists)
+        print("="*5, "SWAP", "="*5)
         swap = psutil.swap_memory()
         print(f"Total: {get_size(swap.total)}")
         print(f"Free: {get_size(swap.free)}")
@@ -120,7 +122,8 @@ def executeMonitoring(x,y):
         print(f"Total read: {get_size(disk_io.read_bytes)}")
         print(f"Total write: {get_size(disk_io.write_bytes)}")
 
-      
+
+        #  Writing the info in the csv
         writer.writerow((str(currentDT),psutil.cpu_percent(),
                         svmem.total, svmem.available, svmem.used, svmem.percent,
                          #svmem.buffers, svmem.cached,
@@ -133,10 +136,10 @@ def executeMonitoring(x,y):
                 
 #-----------------------------------------------------------------------
 
-parser = argparse.ArgumentParser(description = 'Entradas')
+parser = argparse.ArgumentParser(description = 'Inicia o monitoramento de hardware do sistema')
 
 parser.add_argument('--dispositivo', action = 'store', dest = 'd',
-                           required = True, help = 'Cloud ou Edge.')
+                           required = True, help = 'Qual tipo de maquina está executando o monitoramento, Cloud ou Edge.')
 parser.add_argument('--workload', action = 'store', dest = 'w', required = True,
                            help = '0.1, 0.5 or 1.0')
 
@@ -148,7 +151,7 @@ while True:
 
     executeMonitoring(arguments.d, arguments.w) #Coleta os dados de monitoramento
     
-    time.sleep(60) #Espera 60 segundos para coletar novamente
+    time.sleep(1) #Espera 60 segundos para coletar novamente
 
 
 
