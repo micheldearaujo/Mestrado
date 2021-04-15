@@ -186,4 +186,4 @@ for imagefile in test_fnames:
     end_time = time.monotonic()
     print('Tempo de Classificação: ')
     print(timedelta(seconds=end_time - start_time))
-    time.sleep(5)
+    time.sleep(0.1)

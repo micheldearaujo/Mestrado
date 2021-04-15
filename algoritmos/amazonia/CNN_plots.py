@@ -44,16 +44,14 @@ plt.rcParams['ytick.right'] = plt.rcParams['ytick.labelright'] = False
 fig0, axs = plt.subplots()
 axs.set_xlabel('Avg Recall')
 axs.set_ylabel('Avg Precision')
-axs.set_title('Precision and Recall As Function of Image Size and Threshold for CNN')
-
-
-
+axs.set_title('Precision and Recall as Function of Image Size for CNN')
 
 # Threshold X Image Size
 for k in range(len(sizes)):
     axs.plot(cnn[cnn['Target size']==sizes[k]]['Avg Recall'],
             cnn[cnn['Target size']==sizes[k]]['Avg Precision'],
-             ls=linestyles[k],
+             marker=markers[k],
+             markersize=7,
              label=sizes[k])
 
 axs2=axs.twinx()
@@ -61,41 +59,44 @@ plt.rcParams['xtick.top'] = plt.rcParams['xtick.labeltop'] = False
 plt.rcParams['xtick.bottom'] = plt.rcParams['xtick.labelbottom'] = True
 plt.rcParams['ytick.left'] = plt.rcParams['ytick.labelleft'] = True
 plt.rcParams['ytick.right'] = plt.rcParams['ytick.labelright'] = False
-for k in range(0,9):
-    x = (cnn[cnn['Target size']=='8x8']['Avg Recall'][0+k],
-         cnn[cnn['Target size']=='16x16']['Avg Recall'][9+k],
-         cnn[cnn['Target size']=='32x32']['Avg Recall'][18+k],
-         cnn[cnn['Target size']=='64x64']['Avg Recall'][27+k])
 
-    y = (cnn[cnn['Target size']=='8x8']['Avg Precision'][0+k],
-         cnn[cnn['Target size']=='16x16']['Avg Precision'][9+k],
-         cnn[cnn['Target size']=='32x32']['Avg Precision'][18+k],
-         cnn[cnn['Target size']=='64x64']['Avg Precision'][27+k])
-    axs2.scatter(x,y, marker=markers[k],
-                label=thresholds[k],
-                c='black')
+# Plotting the threshold in the same graph as before
+# for k in range(0,9):
+#     x = (cnn[cnn['Target size']=='8x8']['Avg Recall'][0+k],
+#          cnn[cnn['Target size']=='16x16']['Avg Recall'][9+k],
+#          cnn[cnn['Target size']=='32x32']['Avg Recall'][18+k],
+#          cnn[cnn['Target size']=='64x64']['Avg Recall'][27+k])
+#
+#     y = (cnn[cnn['Target size']=='8x8']['Avg Precision'][0+k],
+#          cnn[cnn['Target size']=='16x16']['Avg Precision'][9+k],
+#          cnn[cnn['Target size']=='32x32']['Avg Precision'][18+k],
+#          cnn[cnn['Target size']=='64x64']['Avg Precision'][27+k])
+#     axs2.scatter(x,y, marker=markers[k],
+#                 label=thresholds[k],
+#                 c='black')
 
 axs.grid(which='major', linestyle='--')
 plt.xlim(0.29,1)
 axs.grid(which='minor', linestyle=':')
-axs.legend(title='Image size', loc=8)
-axs2.grid(which='major', linestyle='--')
-axs2.grid(which='minor', linestyle=':')
-axs2.legend(title='Threshold', loc=3)
+axs.legend(title='Image size')
+# axs2.grid(which='major', linestyle='--')
+# axs2.grid(which='minor', linestyle=':')
+# axs2.legend(title='Threshold', loc=3)
 plt.show()
 
-# Accuracy versus threshold
 
-fig1, axs = plt.subplots(1)
+# Accuracy versus threshold
+fig1, axs = plt.subplots()
 axs.set_xlabel('Threshold')
 axs.set_ylabel('Avg Accuracy')
-axs.set_title('Accuracy As Function of Threshold for CNN')
+axs.set_title('Accuracy as Function of Threshold for CNN')
 
 for j in range(len(sizes)):
     axs.plot(cnn[cnn['Target size']==sizes[j]]['Threshold'],
              cnn[cnn['Target size']==sizes[j]]['Avg Accuracy'],
              ls=linestyles[j],
              marker=markers[j],
+             markersize=7,
              label=sizes[j])
 
 axs.grid(which='major', linestyle='--')
@@ -110,19 +111,20 @@ plt.show()
 
 ## -- Este terceiro grafico nao é mais necessário -- #
 
-# fig2, axs = plt.subplots(1)
-# axs.set_xlabel('Avg Recall')
-# axs.set_ylabel('Avg Precision')
-# axs.set_title('Precision and Recall As Function of Threshold for CNN')
-#
-# for h in range(len(thresholds)):
-#     axs.plot(cnn[cnn['Threshold']==thresholds[h]]['Avg Recall'],
-#              cnn[cnn['Threshold']==thresholds[h]]['Avg Precision'],
-#              marker=markers[h],
-#              label=thresholds[h])
-#
-# axs.grid(which='major', linestyle='--')
-# plt.xlim(0.29,1)
-# axs.grid(which='minor', linestyle=':')
-# axs.legend(title='Threshold', loc=3)
-# plt.show()
+fig2, axs = plt.subplots()
+axs.set_xlabel('Avg Recall')
+axs.set_ylabel('Avg Precision')
+axs.set_title('Precision and Recall as Function of Threshold for CNN')
+
+for h in range(len(thresholds)):
+    axs.plot(cnn[cnn['Threshold']==thresholds[h]]['Avg Recall'],
+             cnn[cnn['Threshold']==thresholds[h]]['Avg Precision'],
+             marker=markers[h],
+             markersize=7,
+             label=thresholds[h])
+
+axs.grid(which='major', linestyle='--')
+plt.xlim(0.29,1)
+axs.grid(which='minor', linestyle=':')
+axs.legend(title='Threshold', loc=3)
+plt.show()
