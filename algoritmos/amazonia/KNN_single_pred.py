@@ -2,12 +2,12 @@
 
 from utils import *
 
-start_time=time.monotonic()
+
 # Definindo os parametros
-targ_shape = (8,8,3)
+targ_shape = (8, 8, 3)
 targ_size = targ_shape[:-1]
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
-
+sample_size = 404  #len(test_fnames)*0.1
 
 # Definindo o arquivo csv com os nomes dos arquivos e os labels
 mapping_csv = pd.read_csv(base_dir + '/train_classes.csv')
@@ -63,64 +63,65 @@ knn = joblib.load(base_dir+'/'+'KNN_%s.sav'%targ_shape[0])
 # Carregando o testset inteiro
 #Xte, yte = load_testset(dataset_name)
 
-# Classify only one image
-image_no = 40474
+# Test the algorithm in 404 randomly sampled images from the test directory
+# To get the average classifying time
 
-# Carregando a imagem de test
-img_name = 'train_%s.jpg'%image_no
-print(img_name)
-img = load_img(train_dir+'/'+img_name, target_size=targ_size)
-imgarray = img_to_array(img)
-imgarray = imgarray.reshape(1,-1) # Alterando a dimensão, agora é um vetor unidimensional
-imgarray = imgarray/255
+classifying_times = []
+for k in range(sample_size):
+    imagefile = test_fnames[np.random.randint(0, len(test_fnames))]
+    img_name = imagefile
+    print(img_name)
+    img = load_img(train_dir+'/'+img_name, target_size=targ_size)
+    imgarray = img_to_array(img)
+    imgarray = imgarray.reshape(1,-1) # Alterando a dimensão, agora é um vetor unidimensional
+    imgarray = imgarray/255
 
-# Avaliando o modelo
-#score = rfc.score(Xte, yte)
-#print('Amazon Dataset: ', targ_shape)
-#print('Score_test: ', score)
+    # Avaliando o modelo
+    #score = rfc.score(Xte, yte)
+    #print('Amazon Dataset: ', targ_shape)
+    #print('Score_test: ', score)
 
-# Tentando mostrar o resultado da previsao
+    # Predicting the label
+    start_time=time.monotonic()
+    predicted_labels = knn.predict(imgarray)
+    end_time=time.monotonic()
+    tempo = timedelta(seconds=end_time - start_time)
+    print(predicted_labels)
 
-predicted_labels = knn.predict(imgarray)
-print(predicted_labels)
-
-# Let`s get the image True Labels:
-mapping = create_file_mapping(mapping_csv)
-true_labels = mapping['train_%s'%image_no]
-
-
-# Criando uma lista com todas as classes possiveis
-labels_map, inv_labels_map = create_tag_map(mapping_csv)
-all_labels = []
-for i in range(len(inv_labels_map)):
-    all_labels.append(inv_labels_map[i])
+    # Let`s get the image True Labels:
+    mapping = create_file_mapping(mapping_csv)
+    true_labels = mapping[imagefile.split('.')[0]]
 
 
-# Criando uma lista ordenada com as classes verdadeiras e todas as outras classes
-true_labels_list =[0 for i in range(len(all_labels))]
-for class_ in true_labels:
-    index_ = all_labels.index(class_)
-    true_labels_list[index_] = 1
+    # Criando uma lista com todas as classes possiveis
+    labels_map, inv_labels_map = create_tag_map(mapping_csv)
+    all_labels = []
+    for i in range(len(inv_labels_map)):
+        all_labels.append(inv_labels_map[i])
 
 
-# Criando um dataframe para organizar todas as informações da classificacao da imagem
-knn_df = pd.DataFrame(all_labels, columns=['Labels'])
-knn_df['True_labels'] = pd.Series(true_labels_list)
-knn_df['Predicted_labels'] = pd.Series(predicted_labels[0])
-print(knn_df)
+    # Criando uma lista ordenada com as classes verdadeiras e todas as outras classes
+    true_labels_list =[0 for i in range(len(all_labels))]
+    for class_ in true_labels:
+        index_ = all_labels.index(class_)
+        true_labels_list[index_] = 1
 
 
-print('As classes previstas da imagem são: ')
-print(knn_df[knn_df['Predicted_labels']==1]['Labels'])
-print('\n')
-
-end_time=time.monotonic()
-tempo = timedelta(seconds=end_time - start_time)
-print('Tempo de Classificação:')
-print(tempo)
+    # Criando um dataframe para organizar todas as informações da classificacao da imagem
+    knn_df = pd.DataFrame(all_labels, columns=['Labels'])
+    knn_df['True_labels'] = pd.Series(true_labels_list)
+    knn_df['Predicted_labels'] = pd.Series(predicted_labels[0])
+    print(knn_df)
+    print('As classes previstas da imagem são: ')
+    print(knn_df[knn_df['Predicted_labels']==1]['Labels'])
+    print('\n')
+    print('Tempo de Classificação:')
+    print(tempo)
+    classifying_times.append(tempo)
 
 file=open(base_dir+'/'+'KNN_ClassificationTime.txt','a')
 file.write('Image Size: %s\n'%targ_shape[0])
-file.write('Single prediction time: %s\n'%tempo)
+file.write('Average Single prediction time: %s\n'%np.mean(classifying_times))
+#file.write('Standard deviation Single prediction time: %s\n'%np.std(classifying_times))
 file.write('----------------------------------------------------\n')
 file.close()

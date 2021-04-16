@@ -23,10 +23,11 @@ test_fnames = os.listdir(test_dir)
 
 # Parâmetros do modelo
 opt = SGD(lr=0.01, momentum=0.9)
-targ_shape = (32,32,3)
+targ_shape = (8, 8, 3)
 targ_size = targ_shape[:-1]
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 model_name = 'CNN1_CDA_%s_SGD.h5'%(targ_shape[0])
+sample_size = 1000  #len(test_fnames)*0.1
 
 # Definindo o arquivo csv com os nomes dos arquivos e os labels
 mapping_csv = pd.read_csv(base_dir + '/train_classes.csv')
@@ -113,12 +114,12 @@ for i in range(len(inv_labels_map)):
 # Definindo o threshold (Tolerancia para classficiar como sim ou nao)
 threshold = 0.3
 
-# Initializing the automatic prediction in all images in the
+# Initializing the automatic prediction at 404  images in the
 # Test directory
+classifying_times = []
+for k in range(sample_size):
+    imagefile = test_fnames[np.random.randint(0, len(test_fnames))]
 
-for imagefile in test_fnames:
-
-    start_time = time.monotonic()
     # Carregando a imagem de test
     img_name = imagefile
     print(img_name)
@@ -128,7 +129,10 @@ for imagefile in test_fnames:
     imgarray = imgarray/255
 
     # realizando a previsao da imagem nova
+    start_time = time.monotonic()
     prediction = modelo.predict_proba(imgarray)
+    end_time = time.monotonic()
+    tempo = timedelta(seconds=end_time - start_time)
 
     # Criando uma lista com as classes verdadeiras da referida imagem
     true_classes = mapping[imagefile.split('.')[0]]
@@ -183,7 +187,13 @@ for imagefile in test_fnames:
     print(df_labels[df_labels['Predicted_labels']==1]['Labels'])
     print('\n')
     # Terminando a contagem do tempo
-    end_time = time.monotonic()
     print('Tempo de Classificação: ')
-    print(timedelta(seconds=end_time - start_time))
-    time.sleep(0.1)
+    print(tempo)
+    classifying_times.append(tempo)
+
+file=open(base_dir+'/'+'CNN_ClassificationTime.txt','a')
+file.write('Image Size: %s\n'%(targ_shape[0]))
+file.write('Average Single prediction time: %s\n'%np.mean(classifying_times))
+file.write('samples: %s\n'%len(classifying_times))
+file.write('----------------------------------------------------\n')
+file.close()

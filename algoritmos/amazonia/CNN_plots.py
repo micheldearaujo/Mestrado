@@ -82,7 +82,6 @@ axs.legend(title='Image size')
 # axs2.grid(which='major', linestyle='--')
 # axs2.grid(which='minor', linestyle=':')
 # axs2.legend(title='Threshold', loc=3)
-plt.show()
 
 
 # Accuracy versus threshold
@@ -103,7 +102,6 @@ axs.grid(which='major', linestyle='--')
 plt.xlim(0.09,.91)
 axs.grid(which='minor', linestyle=':')
 axs.legend(title='Image size', loc=4)
-plt.show()
 # -----------------------------
 
 

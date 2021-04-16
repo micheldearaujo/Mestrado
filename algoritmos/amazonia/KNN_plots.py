@@ -17,13 +17,24 @@ test_fnames = os.listdir(test_dir)
 # o melhor é 64x64
 
 knn = pd.read_csv(base_dir+'/'+'KNN_Scores_ALL.csv')
+
+SMALL_SIZE = 22
+MEDIUM_SIZE = 22
+BIGGER_SIZE = 22
+plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=24)     # fontsize of the axes title
+plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+
 fig0, axs = plt.subplots(1)
 axs.set_xlabel('Avg Recall')
 axs.set_ylabel('Avg Precision')
 axs.set_title('Precision and Recall As Function of Image Size and Threshold for KNN')
-axs.plot(knn['Avg Recall'],
-         knn['Avg Precision'],
-         c='black')
+#axs.plot(knn['Avg Recall'],
+#         knn['Avg Precision'])
 
 axs.scatter(knn[knn['Target size']=='8x8']['Avg Recall'],
          knn[knn['Target size']=='8x8']['Avg Precision'],
@@ -35,7 +46,7 @@ axs.scatter(knn[knn['Target size']=='16x16']['Avg Recall'],
          label='16x16', s=80)
 axs.scatter(knn[knn['Target size']=='32x32']['Avg Recall'],
          knn[knn['Target size']=='32x32']['Avg Precision'],
-         marker='>',
+         marker='o',
          label='32x32', s=80)
 axs.scatter(knn[knn['Target size']=='64x64']['Avg Recall'],
          knn[knn['Target size']=='64x64']['Avg Precision'],
