@@ -147,7 +147,7 @@ def evaluate_model(dataset_name):
     file.close()
 
 
-for k in [8,16,32,64]:
+for k in [12,24,48,96]:
     targ_shape = (k, k, 3)
     targ_size=targ_shape[:-1]
     print('Modelo: %s'%targ_shape[0])

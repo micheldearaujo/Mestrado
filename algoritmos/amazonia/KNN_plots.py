@@ -18,6 +18,11 @@ test_fnames = os.listdir(test_dir)
 
 knn = pd.read_csv(base_dir+'/'+'KNN_Scores_ALL.csv')
 
+markers =['o','*','v','s','X','D','+','>','p']
+sizes=['8x8','12x12','16x16','24x24','32x32','48x48','64x64']
+linestyles=['dashed','solid','dashdot','dotted']
+
+
 SMALL_SIZE = 22
 MEDIUM_SIZE = 22
 BIGGER_SIZE = 22
@@ -36,24 +41,30 @@ axs.set_title('Precision and Recall As Function of Image Size and Threshold for 
 #axs.plot(knn['Avg Recall'],
 #         knn['Avg Precision'])
 
-axs.scatter(knn[knn['Target size']=='8x8']['Avg Recall'],
-         knn[knn['Target size']=='8x8']['Avg Precision'],
-         marker='D',
-         label='16x16', s=80)
-axs.scatter(knn[knn['Target size']=='16x16']['Avg Recall'],
-         knn[knn['Target size']=='16x16']['Avg Precision'],
-         marker='X',
-         label='16x16', s=80)
-axs.scatter(knn[knn['Target size']=='32x32']['Avg Recall'],
-         knn[knn['Target size']=='32x32']['Avg Precision'],
-         marker='o',
-         label='32x32', s=80)
-axs.scatter(knn[knn['Target size']=='64x64']['Avg Recall'],
-         knn[knn['Target size']=='64x64']['Avg Precision'],
-         marker='v',
-         label='64x64', s=80)
+for k in range(len(sizes)):
+    axs.scatter(knn[knn['Target size'] == sizes[k]]['Avg Recall'],
+                knn[knn['Target size'] == sizes[k]]['Avg Precision'],
+                marker=markers[k],
+                label=sizes[k], s=90)
+
+# axs.scatter(knn[knn['Target size']=='8x8']['Avg Recall'],
+#          knn[knn['Target size']=='8x8']['Avg Precision'],
+#          marker='D',
+#          label='8x8', s=90)
+# axs.scatter(knn[knn['Target size']=='16x16']['Avg Recall'],
+#          knn[knn['Target size']=='16x16']['Avg Precision'],
+#          marker='X',
+#          label='16x16', s=90)
+# axs.scatter(knn[knn['Target size']=='32x32']['Avg Recall'],
+#          knn[knn['Target size']=='32x32']['Avg Precision'],
+#          marker='o',
+#          label='32x32', s=90)
+# axs.scatter(knn[knn['Target size']=='64x64']['Avg Recall'],
+#          knn[knn['Target size']=='64x64']['Avg Precision'],
+#          marker='v',
+#          label='64x64', s=90)
 axs.grid(which='major', linestyle='--')
-plt.xlim(0.535,0.5525)
+plt.xlim(0.525,0.56)
 axs.grid(which='minor', linestyle=':')
 axs.legend(title='Image size')
 plt.show()

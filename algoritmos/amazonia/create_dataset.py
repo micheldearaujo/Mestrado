@@ -16,7 +16,7 @@ train_dir = os.path.join(base_dir, 'train-jpg')
 test_dir = os.path.join(base_dir, 'test-jpg')
 train_fnames = os.listdir(train_dir)
 test_fnames = os.listdir(test_dir)
-targ_shape = (16,16,3)
+targ_shape = (96, 96, 3)
 targ_size = targ_shape[:-1]
 
 # Plotando algumas imagens

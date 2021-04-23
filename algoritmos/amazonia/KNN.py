@@ -20,7 +20,7 @@ train_fnames = os.listdir(train_dir)
 test_fnames = os.listdir(test_dir)
 
 # Definindo os parametros
-targ_shape = (8,8)
+targ_shape = (48, 48)
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 
 
