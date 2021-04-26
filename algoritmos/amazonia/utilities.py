@@ -1,5 +1,14 @@
+"""
+Getting the internet speed throughout the week
+
+Created on TUE Apr 30 2021     10:00:00
+
+@author: micheldearaujo
+
+"""
+
 import numpy as np
-import os
+import sys, os
 import pandas as pd
 import matplotlib.pyplot as plt
 from PIL import Image
@@ -9,8 +18,9 @@ from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras import backend
 from tensorflow.keras.layers import Dense, Conv2D, MaxPooling2D, Flatten, Dropout
 from tensorflow.keras.optimizers import SGD
-from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import f1_score
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.model_selection import train_test_split
@@ -28,8 +38,8 @@ train_fnames = os.listdir(train_dir)
 test_fnames = os.listdir(test_dir)
 
 
-# Importando os dados
-def load_dataset(dataset_name):
+# Loading the dataset for the ML algorithms
+def load_dataset_ML(dataset_name):
     data = np.load(base_dir+'/'+dataset_name)
     X, y = data['arr_0'], data['arr_1']
     print('Dimensões: ')
@@ -49,6 +59,25 @@ def load_dataset(dataset_name):
     Xte = scaler.fit_transform(Xte)
     return Xtr, Xte, Xval, ytr, yte, yval
 
+# Loading the dataset for the DL algorithms
+def load_dataset_DL(dataset_name):
+    # Carregando
+    data = np.load(base_dir + '/'+ dataset_name)
+    X, y = data['arr_0'], data['arr_1']
+    # Separando os sets de training e testing
+    Xtr, Xval, ytr, yval = train_test_split(X, y, test_size=0.2, random_state=1)
+    Xval, yval = Xval[:4048,:], yval[:4048]
+    print('As dimensões dos vetores são: \n')
+    print('Xtr: ', Xtr.shape)
+    print('\n')
+    print('ytr: ', ytr.shape)
+    print('\n')
+    print('Xval: ', Xval.shape)
+    print('\n')
+    print('yval: ', yval.shape)
+    print('\n')
+    return Xtr, Xval, ytr, yval
+
 def load_testset(dataset_name):
     # Carregando
     data = np.load(base_dir + '/'+ dataset_name)
@@ -62,3 +91,23 @@ def load_testset(dataset_name):
     print('yte shape: ', yte.shape)
     print('\n')
     return Xte, yte
+
+# Creating a function to calcutate the fbeta score
+def fbeta(y_true, y_pred, beta=2):
+    # Clipando a previsao
+    y_pred = backend.clip(y_pred, 0, 1)
+    tp = backend.sum(backend.round(backend.clip(y_true*y_pred, 0, 1)), axis=1)
+    fp = backend.sum(backend.round(backend.clip(y_pred-y_true, 0, 1)), axis=1)
+    fn = backend.sum(backend.round(backend.clip(y_true-y_pred, 0, 1)), axis=1)
+    # Calculando a precisao
+    p = tp/(tp+fp+backend.epsilon())
+    # Calculando o Recall
+    r = tp/(tp+fn+backend.epsilon())
+    # calculando o fbeta, tirado a média para cada classe
+    bb = beta**2
+    fbeta_score = backend.mean((1+bb)*(p*r)/(bb*p+r+backend.epsilon()))
+    return fbeta_score
+
+def evaluation(model, x, true):
+    ypred = model.predict(x)
+    return f1_score(true, ypred, average='samples')

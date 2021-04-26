@@ -1,5 +1,5 @@
 # Fazendo previsoes separadamente
-from utils import *
+from utilities import *
 # -----------------------------------------------
 start_time=time.monotonic()
 # Definindo os parametros

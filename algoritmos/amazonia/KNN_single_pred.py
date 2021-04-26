@@ -1,6 +1,6 @@
 # Fazendo previsoes separadamente com algoritmo K-Nearest Neighbors, com K = 19
 
-from utils import *
+from utilities import *
 
 
 # Definindo os parametros
