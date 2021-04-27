@@ -8,7 +8,7 @@ Created on TUE Apr 30 2021     10:00:00
 """
 from utilities import *
 
-# Definind the hyperams
+# Defining the hyparams
 targ_shape = (64,64)
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
 estimators = 100

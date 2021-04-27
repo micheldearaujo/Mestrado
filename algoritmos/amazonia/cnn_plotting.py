@@ -1,20 +1,18 @@
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import os
-from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
+"""
+Convolutional Neural Network to classify Amazon dataset
+Plotting the results
 
-# Definindo o caminho dos diretorios
-#base_dir = '/home/michel/data/amazonia/kaggle' # Ubuntu
-base_dir = 'D:/michel/data/amazonia/kaggle'
-train_dir = os.path.join(base_dir, 'train-jpg')
-test_dir = os.path.join(base_dir, 'test-jpg')
-train_fnames = os.listdir(train_dir)
-test_fnames = os.listdir(test_dir)
+Created on TUE Apr 30 2021     10:00:00
+
+@author: micheldearaujo
+
+"""
+
+# Importing the library
+from utilities import *
 
 
-cnn = pd.read_csv(base_dir+'/'+'CNN_Scores_ALL.csv')
+cnn = pd.read_csv(base_dir+'/'+'cnn_scores_all.csv')
 
 markers =['o','*','v','s','X','D','+','>','p']
 sizes=['8x8','16x16','32x32','64x64']
@@ -104,10 +102,6 @@ axs.grid(which='minor', linestyle=':')
 axs.legend(title='Image size', loc=4)
 # -----------------------------
 
-
-
-
-## -- Este terceiro grafico nao é mais necessário -- #
 
 fig2, axs = plt.subplots()
 axs.set_xlabel('Avg Recall')

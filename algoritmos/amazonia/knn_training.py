@@ -50,7 +50,7 @@ prev_te = evaluation(Xte, yte)
 score_te = knn.score(Xte, yte)
 
 # Saving the model
-filename = 'KNN_%s.sav'%targ_shape[0]
+filename = 'knn_%s.sav'%targ_shape[0]
 joblib.dump(knn, base_dir+'/'+filename)
 
 tempo = timedelta(seconds=end_time - start_time)

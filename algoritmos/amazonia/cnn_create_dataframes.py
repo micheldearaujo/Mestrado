@@ -1,29 +1,26 @@
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import os
-from tensorflow.keras.optimizers import SGD
+"""
+Plotting the CNN results
 
-# Definindo o caminho dos diretorios
-base_dir = '/home/michel/data/amazonia/kaggle' # Ubuntu
-#base_dir = 'D:/michel/data/amazonia/kaggle'
-train_dir = os.path.join(base_dir, 'train-jpg')
-test_dir = os.path.join(base_dir, 'test-jpg')
-train_fnames = os.listdir(train_dir)
-test_fnames = os.listdir(test_dir)
+Created on TUE Apr 30 2021     10:00:00
 
-# Parâmetros do modelo
+@author: micheldearaujo
+
+"""
+
+# Importing the library
+from utilities import *
+
+# Definind the hyperams
 opt = SGD(lr=0.01, momentum=0.9)
 targ_shape = (64,64,3)
 targ_size = targ_shape[:-1]
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
-model_name = 'CNN1_CDA_%s_SGD.h5'%(targ_shape[0])
+model_name = 'cnn_%s_SGD.h5'%(targ_shape[0])
 
-df8 = pd.read_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(8))
-df16 = pd.read_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(16))
-df32 = pd.read_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(32))
-df64 = pd.read_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(64))
+df8 = pd.read_csv(base_dir+'/'+'cnn_scores_%s.csv'%(8))
+df16 = pd.read_csv(base_dir+'/'+'cnn_scores_%s.csv'%(16))
+df32 = pd.read_csv(base_dir+'/'+'cnn_scores_%s.csv'%(32))
+df64 = pd.read_csv(base_dir+'/'+'cnn_scores_%s.csv'%(64))
 #df128 = pd.read_csv(base_dir+'/'+'CNN_Scores_%s.csv'%(128), index_col='Unnamed: 0')
 
 plt.figure(1)
@@ -58,4 +55,4 @@ df32['Target_size'] = df32['Avg TP'].apply(create_target_size32)
 df64['Target_size'] = df64['Avg TP'].apply(create_target_size64)
 #df128['Target_size'] = df128['Avg TP'].apply(create_target_size128)
 df = pd.concat([df8,df16,df32,df64], axis =0)
-df.to_csv(base_dir+'/'+'CNN_Scores_ALL.csv', index=False)
+df.to_csv(base_dir+'/'+'cnn_scores_all.csv', index=False)

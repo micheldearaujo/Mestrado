@@ -1,25 +1,16 @@
+"""
+Creating the dataset from the images
 
-# Importando as bibliotecas necessarias
-import pandas as pd
-from time import sleep
-import matplotlib.pyplot as plt
-from matplotlib.image import imread
-import numpy as np
-import os
-from tensorflow.keras.preprocessing.image import img_to_array, array_to_img, load_img
-from datetime import timedelta
-import time
+Created on TUE Apr 30 2021     10:00:00
 
-# Definindo o caminho dos diretorios
-base_dir = 'D:/michel/data/amazonia/kaggle'
-train_dir = os.path.join(base_dir, 'train-jpg')
-test_dir = os.path.join(base_dir, 'test-jpg')
-train_fnames = os.listdir(train_dir)
-test_fnames = os.listdir(test_dir)
-targ_shape = (96, 96, 3)
-targ_size = targ_shape[:-1]
+@author: micheldearaujo
 
-# Plotando algumas imagens
+"""
+
+# Importing the library
+from utilities import *
+
+# Plotting some images
 def plot_imagens():
     for i in range(9):
         plt.subplot(330+1+i)
@@ -27,15 +18,16 @@ def plot_imagens():
         image = imread(filename)
         plt.imshow(image)
     plt.show()
+
 #plot_imagens()
 
-# Criando mapas
-# Como vimos, as figuras não estão legendadas (no nome ou por pastas, por exemplo). Em vez disso,
-# temos um arquivo csv separado com nomes das images e o respectivo label. Dessa forma, precisamos
-# criar um mapa para atribuir os labels do .csv para as imagems!!
+# Lets create some maps
+# As can be seen, the images are not labeled by the file name
+# There is a separeted csv file which holds all the images names and its labels
+# We need to create a map to link the images with its labels
 
 mapping_csv = pd.read_csv(base_dir + '/train_classes.csv')
-print("A dimensão do dataframe é: ",mapping_csv.shape) # Dimensões do dataframe com os labels
+
 
 # Vamos criar um conjunto (set) de tags para cada atributo na coluna tags.
 # Como uma figura pode ter mais de uma classificação, então iremos atribuir uma lista de classificações para cada imagem.

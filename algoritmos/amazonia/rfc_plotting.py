@@ -1,21 +1,15 @@
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import os
-import matplotlib
-from tensorflow.keras.optimizers import SGD
+"""
+Random Forest Classifier to classify Amazon dataset
+Plotting the classification results
 
-# Definindo o caminho dos diretorios
-#base_dir = '/home/michel/data/amazonia/kaggle' # Ubuntu
-base_dir = 'D:/michel/data/amazonia/kaggle'
-train_dir = os.path.join(base_dir, 'train-jpg')
-test_dir = os.path.join(base_dir, 'test-jpg')
-train_fnames = os.listdir(train_dir)
-test_fnames = os.listdir(test_dir)
+Created on TUE Apr 30 2021     10:00:00
 
+@author: micheldearaujo
 
-rfc = pd.read_csv(base_dir+'/'+'RFC_Scores_ALL.csv')
+"""
+from utilities import *
+
+rfc = pd.read_csv(base_dir+'/'+'rfc_scores_all.csv')
 
 #matplotlib.rcParams.update({'font.size': 20})
 SMALL_SIZE = 22

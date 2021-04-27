@@ -1,5 +1,5 @@
 """
-Getting the internet speed throughout the week
+Models Utilities
 
 Created on TUE Apr 30 2021     10:00:00
 
@@ -28,6 +28,7 @@ from tensorflow.keras.preprocessing.image import img_to_array, array_to_img, loa
 import time
 from datetime import timedelta
 import joblib
+from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
 
 # Definindo o caminho dos diretorios
 #base_dir = '/home/michel/data/amazonia/kaggle' # Ubuntu
@@ -78,13 +79,29 @@ def load_dataset_DL(dataset_name):
     print('\n')
     return Xtr, Xval, ytr, yval
 
-def load_testset(dataset_name):
+def load_testset_DL(dataset_name):
     # Carregando
     data = np.load(base_dir + '/'+ dataset_name)
     X, y = data['arr_0'], data['arr_1']
-    # Separando os sets de training e testing
+    # Criando o testset, lembrando que os primeiros 4048 são de validação, já utilizados em cima
     Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.2, random_state=1)
-    Xte, yte = Xte[:4048,:], yte[:4048]
+    Xte, yte = Xte[4048:,:], yte[4048:]
+    print('As dimensões dos vetores são: \n')
+    print('Xte shape: ', Xte.shape)
+    print('\n')
+    print('yte shape: ', yte.shape)
+    print('\n')
+    return Xte, yte
+
+def load_testset_ML(dataset_name):
+    # Carregando
+    data = np.load(base_dir + '/'+ dataset_name)
+    X, y = data['arr_0'], data['arr_1']
+    # Criando o testset, lembrando que os primeiros 4048 são de validação, já utilizados em cima
+    Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.2, random_state=1)
+    Xtr = Xtr.reshape(Xtr.shape[0], targ_shape[0] * targ_shape[0] * 3)  ## Vamos concatenar os dados das 3 dimensoes em apenas 1 dimensão
+    Xte = Xte.reshape(Xte.shape[0], targ_shape[0] * targ_shape[0] * 3)
+    Xte, yte = Xte[4048:,:], yte[4048:]
     print('As dimensões dos vetores são: \n')
     print('Xte shape: ', Xte.shape)
     print('\n')
@@ -111,3 +128,30 @@ def fbeta(y_true, y_pred, beta=2):
 def evaluation(model, x, true):
     ypred = model.predict(x)
     return f1_score(true, ypred, average='samples')
+
+# Creating a dictionary connecting a numeric value to each label
+def create_tag_map(mapping_csv):
+    labels = set()
+    for i in range(len(mapping_csv)):
+        tags = mapping_csv['tags'][i].split(' ')
+        labels.update(tags)
+
+    labels = list(labels)
+    labels.sort()
+    labels_map = {labels[k]: k for k in range(len(labels))}
+    inv_labels_map = {k: labels[k] for k in range(len(labels))}
+    return labels_map, inv_labels_map
+
+# Creating a dictionary with all images and their labels
+def create_file_mapping(mapping_csv):
+    mapping=dict() # Criamos um dicionário vazio
+    for j in range(len(mapping_csv)):
+        """ percorremos o dataframe inteiro, pegando cada nome da imagem
+        e sua respectiva tag, então separamos a tag por espaço
+        e dizemos que o nome da tag é igual a sua tag, isso cria o dicionário!
+        Agora temos multilabels para cada imagem.
+        """
+        name, tags = mapping_csv['image_name'][j], mapping_csv['tags'][j]
+        mapping[name] = tags.split(' ')
+    return mapping
+

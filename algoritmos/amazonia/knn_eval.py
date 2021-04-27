@@ -1,7 +1,15 @@
-# Fazendo previsoes separadamente
+"""
+K-Nearest Neighbors to classify Amazon dataset
+Evaluating the model
+Created on TUE Apr 30 2021     10:00:00
+
+@author: micheldearaujo
+
+"""
 from utilities import *
+
 # -----------------------------------------------
-start_time=time.monotonic()
+
 # Definindo os parametros
 # targ_shape = (16, 16,3)
 # targ_size = targ_shape[:-1]
@@ -9,66 +17,26 @@ start_time=time.monotonic()
 
 
 # -------------------------------------------------
-# Definindo o arquivo csv com os nomes dos arquivos e os labels
-mapping_csv = pd.read_csv(base_dir + '/train_classes.csv')
-print("A dimensão do dataframe é: ", mapping_csv.shape) # Dimensões do dataframe com os labels
 
-def load_testset(dataset_name):
-    # Carregando
-    data = np.load(base_dir + '/'+ dataset_name)
-    X, y = data['arr_0'], data['arr_1']
-    # Criando o testset, lembrando que os primeiros 4048 são de validação, já utilizados em cima
-    Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.2, random_state=1)
-    Xtr = Xtr.reshape(Xtr.shape[0], targ_shape[0] * targ_shape[0] * 3)  ## Vamos concatenar os dados das 3 dimensoes em apenas 1 dimensão
-    Xte = Xte.reshape(Xte.shape[0], targ_shape[0] * targ_shape[0] * 3)
-    Xte, yte = Xte[4048:,:], yte[4048:]
-    print('As dimensões dos vetores são: \n')
-    print('Xte shape: ', Xte.shape)
-    print('\n')
-    print('yte shape: ', yte.shape)
-    print('\n')
-    return Xte, yte
-
-def create_tag_map(mapping_csv):
-    labels = set()
-    for i in range(len(mapping_csv)):
-        tags = mapping_csv['tags'][i].split(' ')
-        labels.update(tags)
-
-    labels = list(labels)
-    labels.sort()
-    labels_map = {labels[k]: k for k in range(len(labels))}
-    inv_labels_map = {k: labels[k] for k in range(len(labels))}
-    return labels_map, inv_labels_map
-
-# Vamos criar um dicionário contendo o nome de todas as imagens e suas respectivas classes
-def create_file_mapping(mapping_csv):
-    mapping=dict() # Criamos um dicionário vazio
-    for j in range(len(mapping_csv)):
-        """ percorremos o dataframe inteiro, pegando cada nome da imagem
-        e sua respectiva tag, então separamos a tag por espaço
-        e dizemos que o nome da tag é igual a sua tag, isso cria o dicionário!
-        Agora temos multilabels para cada imagem.
-        """
-        name, tags = mapping_csv['image_name'][j], mapping_csv['tags'][j]
-        mapping[name] = tags.split(' ')
-    return mapping
-
+# Load the file with the images names and labels
+mapping_csv = pd.read_csv(base_dir + '/' + 'train_classes.csv')
 
 # ------------------------------------------------------------
-# Calling the dictionary function
+
+# Loading the image-label dictionary
 mapping = create_file_mapping(mapping_csv)
 
-# Criando os dicionários que relacionam um numero com cada classe
+# Loading the label-number dictionary
 labels_map, inv_labels_map = create_tag_map(mapping_csv)
 
-# Criando uma lista com todas as classes possiveis
+# Creating a list with all possible labels
 all_labels = []
 for i in range(len(inv_labels_map)):
     all_labels.append(inv_labels_map[i])
 
 
 # Classifying all the images in the test set
+start_time=time.monotonic()
 def evaluate_model(dataset_name):
     TP, FP, TN, FN = 0, 0, 0, 0
     for image_no in range(len(Xte), 2*len(Xte)):
@@ -112,21 +80,18 @@ def evaluate_model(dataset_name):
     # print('Avg True Negatives: ', TN)
     # print('Avg False Negatives: ', FN)
 
+    # Calculating the metrics
     # Precision
     precision = round(TP / (TP + FP), 3)
-    print('Avg Precision: ', precision)
 
-    # Recall (Sensibilidade ou True Positive Rate)
+    # Recall (Sensibility ou True Positive Rate)
     recall = round(TP / (TP + FN), 3)
-    print('Avg Recal: ', recall)
 
-    # F1 Score (Media ponderada entre precision e recall)
-    f1_score = round(2 * (precision * recall) / (precision + recall), 3)
-    print('Avg F1_Score:', f1_score)
-
-    # Overall Accuracy (Porcentagem de acertos sobre o total)
+    # Accuracy (Percentage of Trues)
     acc = round((TP+TN)/(TP + FP + TN + FN), 3)
-    print('Avg Accuracy: ', acc)
+
+    # F1 Score (Weighted average betewwn precision and recall)
+    f1_score = round(2 * (precision * recall) / (precision + recall), 3)
 
 
 
@@ -136,7 +101,7 @@ def evaluate_model(dataset_name):
     print('Tempo de Evaluation:')
     print(tempo)
 
-    file=open(base_dir+'/'+'KNN_Scores.txt','a')
+    file=open(base_dir+'/'+'knn_scores.txt','a')
     file.write('Image Size: %s\n'%targ_shape[0])
     file.write('Evaluation time: %s\n'%tempo)
     file.write('Avg Precision: %s\n'%precision)
@@ -151,8 +116,8 @@ for k in [12,24,48,96]:
     targ_shape = (k, k, 3)
     targ_size=targ_shape[:-1]
     print('Modelo: %s'%targ_shape[0])
-    # Carregando o testset inteiro
+    # Loading the testset
     dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
-    Xte, yte = load_testset(dataset_name)
-    knn = joblib.load(base_dir+'/'+'KNN_%s.sav'%targ_shape[0])
+    Xte, yte = load_testset_ML(dataset_name)
+    knn = joblib.load(base_dir+'/'+'knn_%s.sav'%targ_shape[0])
     evaluate_model(dataset_name)

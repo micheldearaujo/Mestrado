@@ -1,21 +1,19 @@
-import numpy as np
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-import os
-from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
+"""
+Convolutional Neural Network to classify Amazon dataset
+Plotting the classification time results
 
-# Definindo o caminho dos diretorios
-#base_dir = '/home/michel/data/amazonia/kaggle' # Ubuntu
-base_dir = 'D:/michel/data/amazonia/kaggle'
-train_dir = os.path.join(base_dir, 'train-jpg')
-test_dir = os.path.join(base_dir, 'test-jpg')
-train_fnames = os.listdir(train_dir)
-test_fnames = os.listdir(test_dir)
+Created on TUE Apr 30 2021     10:00:00
 
-cnn = pd.read_csv(base_dir+'/'+'CNN_Scores_03.csv')
-knn = pd.read_csv(base_dir+'/'+'KNN_Scores_ALL.csv')
-rfc = pd.read_csv(base_dir+'/'+'RFC_Scores_ALL.csv')
+@author: micheldearaujo
+
+"""
+
+# Importing the library
+from utilities import *
+
+cnn = pd.read_csv(base_dir+'/'+'cnn_scores_03.csv')
+knn = pd.read_csv(base_dir+'/'+'knn_scores_all.csv')
+rfc = pd.read_csv(base_dir+'/'+'rfc_scores_all.csv')
 #cnn.dropna(inplace=True)
 #knn.dropna(inplace=True)
 #rfc.dropna(inplace=True)
