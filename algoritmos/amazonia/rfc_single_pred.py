@@ -22,7 +22,7 @@ mapping_csv = pd.read_csv(base_dir + '/' + 'train_classes.csv')
 
 
 # Loading the compiling the previously trained model
-rfc = joblib.load(base_dir+'/'+'RFC_%s_%s.sav'%(targ_shape[0],estimators))
+rfc = joblib.load(base_dir+'/'+'rfc_%s_%s.sav'%(targ_shape[0],estimators))
 
 # Carregando o testset inteiro
 #Xte, yte = load_testset(dataset_name)

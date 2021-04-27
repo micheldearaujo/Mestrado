@@ -15,7 +15,7 @@ opt = SGD(lr=0.01, momentum=0.9)
 targ_shape = (32,32,3)
 targ_size = targ_shape[:-1]
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
-model_name = 'CNN1_CDA_%s_SGD.h5'%(targ_shape[0])
+model_name = 'cnn_%s_SGD.h5'%(targ_shape[0])
 
 # Load the file with the images names and labels
 mapping_csv = pd.read_csv(base_dir + '/train_classes.csv')
@@ -106,8 +106,3 @@ print('Avg F1_Score:', f1_score)
 print('\n')
 print('As classes previstas da imagem são: ')
 print(df_labels[df_labels['Predicted_labels']==1]['Labels'])
-print('\n')
-# Terminando a contagem do tempo
-end_time = time.monotonic()
-print('Tempo de Classificação: ')
-print(timedelta(seconds=end_time - start_time))

@@ -35,7 +35,7 @@ for i in range(len(inv_labels_map)):
     all_labels.append(inv_labels_map[i])
 
 # Loading the compiling the previously trained model
-rfc = joblib.load(base_dir+'/'+'RFC_%s_%s.sav'%(targ_shape[0],estimators))
+rfc = joblib.load(base_dir+'/'+'rfc_%s_%s.sav'%(targ_shape[0],estimators))
 
 # Loading the testset
 Xte, yte = load_testset_ML(dataset_name)

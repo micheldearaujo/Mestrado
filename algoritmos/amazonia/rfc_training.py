@@ -39,12 +39,12 @@ print('Score_validation: ', score_val)
 
 
 # Saving the model
-filename = 'RFC_%s_%s.sav'%(targ_shape[0],estimators)
+filename = 'rfc_%s_%s.sav'%(targ_shape[0],estimators)
 joblib.dump(rfc, base_dir+'/'+filename)
 tempo = timedelta(seconds=end_time - start_time)
 
 # Printing the results
-file=open(base_dir+'/'+'RFC_Training.txt','a')
+file=open(base_dir+'/'+'rfc_training.txt','a')
 file.write('Image Size: %s_%s\n'%(targ_shape[0],estimators))
 file.write('Training time: %s\n'%tempo)
 file.write('F1_Score_Validation: %s\n'%prev_val)

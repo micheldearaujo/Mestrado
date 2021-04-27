@@ -16,7 +16,7 @@ opt = SGD(lr=0.01, momentum=0.9)
 targ_shape = (8, 8, 3)
 targ_size = targ_shape[:-1]
 dataset_name = 'amazon_data_%s.npz'%(targ_shape[0])
-model_name = 'CNN1_CDA_%s_SGD.h5'%(targ_shape[0])
+model_name = 'cnn_%s_SGD.h5'%(targ_shape[0])
 sample_size = 1000  #len(test_fnames)*0.1
 
 # Load the file with the images names and labels

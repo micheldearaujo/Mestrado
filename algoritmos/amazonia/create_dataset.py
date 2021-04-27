@@ -10,6 +10,9 @@ Created on TUE Apr 30 2021     10:00:00
 # Importing the library
 from utilities import *
 
+# Defining the hyparams
+targ_size=(128,128)
+
 # Plotting some images
 def plot_imagens():
     for i in range(9):
@@ -73,7 +76,7 @@ def one_hot_enconde(tags, mapping):
 
 
 # Criando uma função para carregar as imagens
-def load_dataset(path, file_mapping, tag_mapping,targ_size=(128,128)):
+def load_dataset(path, file_mapping, tag_mapping,targ_size):
     pics, targets = list(), list()
     # Vai percorrer todas as imagens no diretório
     for filename in os.listdir(path):

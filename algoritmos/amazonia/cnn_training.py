@@ -77,7 +77,7 @@ def run():
 
     # Building the model
     model = define_model()
-    model_name = 'CNN_%s_SGD.h5' % (targ_shape[0])
+    model_name = 'cnn_%s_SGD.h5' % (targ_shape[0])
     checkpoint = ModelCheckpoint(base_dir+'/'+model_name, monitor='loss', save_best_only=True,
                                  mode='min', save_freq=1, save_weights_only=True)
     early_stop = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=25)
@@ -102,14 +102,14 @@ def run():
     print('> loss=%.3f, fbeta=%.3f'%(loss, fbeta))
 
     # Saving the model
-    model_name = 'CNN_%s_SGD.h5'%(targ_shape[0])
+    model_name = 'cnn_%s_SGD.h5'%(targ_shape[0])
     # Salvando o modelo para futuras previsoes
     model.save(base_dir+'/'+model_name)
     # Plotando as curvas de aprendizado
     resumo(modelfit)
 
 
-    file = open(base_dir + '/' + 'CNN_Training.txt', 'a')
+    file = open(base_dir + '/' + 'cnn_training.txt', 'a')
     file.write('Image Size: %s\n' % targ_shape[0])
     file.write('Training time: %s\n' % tempo)
     file.write('Loss: %s\n' % loss)
