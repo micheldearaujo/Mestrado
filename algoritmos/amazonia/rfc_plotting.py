@@ -26,40 +26,48 @@ plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 plt.rcParams['xtick.top'] = plt.rcParams['xtick.labeltop'] = False
 
 
-markers =['o','*','v','s','X','D','+','>','p']
+markers =['o','*','v','X','s','D','+','>','p']
 sizes=['8x8','16x16','32x32','64x64','128x128']
 linestyles=['dashed','solid','dashdot','dotted']
-n_trees = [100,500]
+n_trees = ['100','500']
 cores=['blue','orange','green','red']
+ss = [200,120,120,120,120]
 
-fig0, axs = plt.subplots(1,2, sharey=True)
+fig0, axs = plt.subplots(1, 2)
 #plt.suptitle('Precision and Recall As Function of The Trees Number and Image Size for RFC')
-axs[0].set_xlabel('Recall')
-axs[1].set_xlabel('Recall')
+
+axs[0].set_xlabel('N trees')
+
+axs[1].set_xlabel('N trees')
 axs[0].set_ylabel('Precision')
+axs[1].set_ylabel('Recall')
 #axs.set_title('Precision and Recall As Function of The Trees Number and Image Size for RFC')
 axs[0].grid(which='major', linestyle='--')
 axs[0].grid(which='minor', linestyle=':')
 axs[1].grid(which='major', linestyle='--')
 axs[1].grid(which='minor', linestyle=':')
 
+
 for k in range(len(sizes)):
-    axs[0].plot(rfc[rfc['Target size']==sizes[k]]['Avg Recall'],
+    axs[0].scatter(rfc[rfc['Target size']==sizes[k]]['n Trees'],
             rfc[rfc['Target size']==sizes[k]]['Avg Precision'],
              marker=markers[k],
-                markersize=9,
+                s=ss[k],
              label=sizes[k])
-for k in range(len(n_trees)):
-    axs[1].plot(rfc[rfc['n Trees']==n_trees[k]]['Avg Recall'],
-            rfc[rfc['n Trees']==n_trees[k]]['Avg Precision'],
+for k in range(len(sizes)):
+    axs[1].scatter(rfc[rfc['Target size']==sizes[k]]['n Trees'],
+            rfc[rfc['Target size']==sizes[k]]['Avg Recall'],
              marker=markers[k],
-                markersize=8,
-             label=n_trees[k])
+                s=ss[k],
+             label=sizes[k])
+axs[0].legend(title='Image size', loc=4)
+axs[1].legend(title='Image size', loc=4)
 
-axs[0].scatter(rfc[rfc['Target size']=='128x128']['Avg Recall'],
-            rfc[rfc['Target size']=='128x128']['Avg Precision'])
-axs[0].legend(title='Image Size')
-axs[1].legend(title='n trees')
+
+# axs[0].scatter(rfc[rfc['Target size']=='128x128']['Avg Recall'],
+#             rfc[rfc['Target size']=='128x128']['Avg Precision'])
+# axs[0].legend(title='Image Size')
+# axs[1].legend(title='n trees')
 # axs2=axs.twiny()
 # for k in [0,5]:
 #     x = (rfc[rfc['Target size']=='8x8']['Avg Recall'][0+k],
@@ -75,8 +83,8 @@ axs[1].legend(title='n trees')
 #                 label=n_trees[k],
 #                  color='black',
 #                  s=90)
+axs[0].set_ylim(0.966,0.98)
 
-#plt.xlim(0.875,0.935)
 #plt.ylim(0.965,0.985)
 
 

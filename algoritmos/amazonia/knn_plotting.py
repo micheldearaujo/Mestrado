@@ -28,21 +28,31 @@ plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
 plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
 plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
-fig0, axs = plt.subplots(1)
-axs.set_xlabel('Recall')
-axs.set_ylabel('Precision')
-#axs.set_title('Precision and Recall As Function of Image Size and Threshold for KNN')
-#axs.plot(knn['Avg Recall'],
-#         knn['Avg Precision'])
+fig0, axs = plt.subplots(1, 2)
+
+axs[0].set_xlabel('Image size')
+axs[1].set_xlabel('Image size')
+axs[0].set_ylabel('Precision')
+axs[1].set_ylabel('Recall')
+
+x,y = list(), list()
+for k in range(len(sizes)):
+    x.append(knn[knn['Target size']==sizes[k]]['Target size'][k])
+    y.append(knn[knn['Target size']==sizes[k]]['Avg Precision'][k])
+axs[0].plot(x,y, marker ='o', markersize=10)
+x,y = list(), list()
+
 
 for k in range(len(sizes)):
-    axs.scatter(knn[knn['Target size'] == sizes[k]]['Avg Recall'],
-                knn[knn['Target size'] == sizes[k]]['Avg Precision'],
-                marker=markers[k],
-                label=sizes[k], s=110)
+    x.append(knn[knn['Target size']==sizes[k]]['Target size'][k])
+    y.append(knn[knn['Target size']==sizes[k]]['Avg Recall'][k])
 
-axs.grid(which='major', linestyle='--')
-plt.xlim(0.535,0.555)
-axs.grid(which='minor', linestyle=':')
-axs.legend(title='Image size')
+axs[1].plot(x,y, marker='o', markersize=10)
+#axs[0].legend(title='Image size')
+#axs[1].legend(title='Image size')
+
+axs[0].grid(which='major', linestyle='--')
+axs[0].grid(which='minor', linestyle=':')
+axs[1].grid(which='major', linestyle='--')
+axs[1].grid(which='minor', linestyle=':')
 plt.show()
