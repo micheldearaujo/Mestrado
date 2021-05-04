@@ -40,22 +40,23 @@ for i in range(len(inv_labels_map)):
 
 # Defning the tresholds
 threshold = 0.3
+
 # Classify only one image
-image_no = 40477
+imagefile = test_fnames[np.random.randint(0, len(test_fnames))]
 
 # Loading the test image
-img_name = 'train_%s.jpg'%image_no
+img_name = imagefile
 print(img_name)
-img = load_img(train_dir+'/'+img_name, target_size=targ_size)
+img = load_img(test_dir + '/' + img_name, target_size=targ_size)
 imgarray = img_to_array(img)
-imgarray = imgarray.reshape((1,)+imgarray.shape) # Alterando a dimensão, agora é um vetor unidimensional
-imgarray = imgarray/255
+imgarray = imgarray.reshape((1,) + imgarray.shape)  # Alterando a dimensão, agora é um vetor unidimensional
+imgarray = imgarray / 255
 
 # realizando a previsao da imagem nova
-prediction = modelo.predict_proba(imgarray)
+prediction = modelo.predict(imgarray)
 
 # Criando uma lista com as classes verdadeiras da referida imagem
-true_classes = mapping['train_%s'%image_no]
+true_classes = mapping[imagefile.split('.')[0]]
 
 # Criando uma lista ordenada com as classes verdadeiras e todas as outras classes
 true_classes_list =[0 for i in range(len(classes))]

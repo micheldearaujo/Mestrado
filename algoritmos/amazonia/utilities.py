@@ -40,7 +40,7 @@ test_fnames = os.listdir(test_dir)
 
 
 # Loading the dataset for the ML algorithms
-def load_dataset_ML(dataset_name):
+def load_dataset_ML(dataset_name,targ_shape):
     data = np.load(base_dir+'/'+dataset_name)
     X, y = data['arr_0'], data['arr_1']
     print('Dimensões: ')
@@ -48,6 +48,8 @@ def load_dataset_ML(dataset_name):
     Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, random_state=1)
     Xtr = Xtr.reshape(Xtr.shape[0], targ_shape[0] * targ_shape[0] * 3)  ## Vamos concatenar os dados das 3 dimensoes em apenas 1 dimensão
     Xte = Xte.reshape(Xte.shape[0], targ_shape[0] * targ_shape[0] * 3)
+    #Xtr = Xtr.reshape(-1,1)
+    #Xte = Xte.reshape(-1,1)
     # Dividindo o set test em dois, para temos validation+test
     Xval = Xte[:4048, :]
     yval = yte[:4048]
@@ -58,7 +60,7 @@ def load_dataset_ML(dataset_name):
     Xtr = scaler.fit_transform(Xtr)
     Xval = scaler.fit_transform(Xval)
     Xte = scaler.fit_transform(Xte)
-    return Xtr, Xte, Xval, ytr, yte, yval
+    return Xtr, Xval, ytr, yval
 
 # Loading the dataset for the DL algorithms
 def load_dataset_DL(dataset_name):
@@ -108,6 +110,7 @@ def load_testset_ML(dataset_name):
     print('yte shape: ', yte.shape)
     print('\n')
     return Xte, yte
+
 
 # Creating a function to calcutate the fbeta score
 def fbeta(y_true, y_pred, beta=2):

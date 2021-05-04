@@ -13,7 +13,7 @@ from utilities import *
 knn = pd.read_csv(base_dir+'/'+'knn_scores_all.csv')
 
 markers =['o','*','v','s','X','D','+','>','p']
-sizes=['8x8','12x12','16x16','24x24','32x32','48x48','64x64']
+sizes=['8x8','16x16','32x32','64x64']
 linestyles=['dashed','solid','dashdot','dotted']
 
 
@@ -29,9 +29,9 @@ plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
 plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
 fig0, axs = plt.subplots(1)
-axs.set_xlabel('Avg Recall')
-axs.set_ylabel('Avg Precision')
-axs.set_title('Precision and Recall As Function of Image Size and Threshold for KNN')
+axs.set_xlabel('Recall')
+axs.set_ylabel('Precision')
+#axs.set_title('Precision and Recall As Function of Image Size and Threshold for KNN')
 #axs.plot(knn['Avg Recall'],
 #         knn['Avg Precision'])
 
@@ -39,10 +39,10 @@ for k in range(len(sizes)):
     axs.scatter(knn[knn['Target size'] == sizes[k]]['Avg Recall'],
                 knn[knn['Target size'] == sizes[k]]['Avg Precision'],
                 marker=markers[k],
-                label=sizes[k], s=90)
+                label=sizes[k], s=110)
 
 axs.grid(which='major', linestyle='--')
-plt.xlim(0.525,0.56)
+plt.xlim(0.535,0.555)
 axs.grid(which='minor', linestyle=':')
 axs.legend(title='Image size')
 plt.show()

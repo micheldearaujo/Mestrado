@@ -11,9 +11,9 @@ Created on TUE Apr 30 2021     10:00:00
 # Importing the library
 from utilities import *
 
-cnn = pd.read_csv(base_dir+'/'+'cnn_scores_03.csv')
-knn = pd.read_csv(base_dir+'/'+'knn_scores_all.csv')
-rfc = pd.read_csv(base_dir+'/'+'rfc_scores_all.csv')
+cnn = pd.read_csv(base_dir+'/'+'cnn_scores_03_.csv')
+knn = pd.read_csv(base_dir+'/'+'knn_scores_all_.csv')
+rfc = pd.read_csv(base_dir+'/'+'rfc_scores_all_.csv')
 #cnn.dropna(inplace=True)
 #knn.dropna(inplace=True)
 #rfc.dropna(inplace=True)
@@ -41,25 +41,28 @@ plt.rcParams['ytick.right'] = plt.rcParams['ytick.labelright'] = False
 fig, axs = plt.subplots()
 
 # Making plots of the CNN algorithm
-axs.set_xlabel('Image Size')
-axs.set_ylabel('Single Classifying Time (s)')
-axs.set_title('Single Classifying Time for the CNN')
-axs.plot(cnn['Target size'],cnn['Single classifying time (s)'], marker='o', markersize=9)
+axs.set_xlabel('Image size')
+axs.set_ylabel('Single classifying time (s)')
+#axs.set_title('Single classifying time for the CNN on server environment')
+axs.plot(cnn['Target size'][0:4],cnn['Single classifying time (s)'][0:4], marker='o', markersize=9, label='Edge')
+axs.plot(cnn['Target size'][4:],cnn['Single classifying time (s)'][4:], marker='D', markersize=9, label='Server')
 # axs.xaxis.set_major_locator(MultipleLocator(1))
 # axs.yaxis.set_major_locator(MultipleLocator(0.5))
 # axs.xaxis.set_minor_locator(AutoMinorLocator(1))
 # axs.yaxis.set_minor_locator(AutoMinorLocator(1))
 axs.grid(which='major', linestyle='--')
 axs.grid(which='minor', linestyle=':')
+axs.legend()
 
 
 fig2, axs = plt.subplots()
 # Making plots of the RFC algorithm
-axs.set_xlabel('Image Size')
-axs.set_ylabel('Single Classifying Time (s)')
-axs.set_title('Single Classifying Time for the RFC')
-axs.plot(rfc[rfc['n Trees']==100]['Target size'], rfc[rfc['n Trees']==100]['Single classifying time (s)'], c='orange', label='n Trees = 100', marker='o', markersize=7)
-axs.plot(rfc[rfc['n Trees']==500]['Target size'], rfc[rfc['n Trees']==500]['Single classifying time (s)'], label='n Trees = 500', marker='D', markersize=8)
+axs.set_xlabel('Image size')
+axs.set_ylabel('Single classifying cime (s)')
+#axs.set_title('Single classifying time for the RFC on server environment')
+axs.plot(rfc[rfc['n Trees']==100][0:5]['Target size'], rfc[rfc['n Trees']==100]['Single classifying time (s)'][0:5], c='orange', label='n trees = 100/ Edge', marker='o', markersize=7)
+axs.plot(rfc[rfc['n Trees']==100][5:]['Target size'], rfc[rfc['n Trees']==100]['Single classifying time (s)'][5:], c='green', label='n trees = 100/ Server', marker='^', markersize=7)
+axs.plot(rfc[rfc['n Trees']==500]['Target size'], rfc[rfc['n Trees']==500]['Single classifying time (s)'], label='n trees = 500/ Server', marker='D', markersize=8)
 axs.legend()
 # axs.xaxis.set_major_locator(MultipleLocator(1))
 # axs.yaxis.set_major_locator(MultipleLocator(5))
@@ -71,17 +74,18 @@ axs.grid(which='minor', linestyle=':')
 
 fig3, axs = plt.subplots()
 # Making plots of the KNN algorithm
-axs.set_xlabel('Image Size')
-axs.set_ylabel('Single Classifying Time (s)')
-axs.set_title('Single Classifying Time for the KNN')
-axs.plot(knn['Target size'], knn['Single classifying time (s)'], marker='o', markersize=9)
-axs.xaxis.set_major_locator(MultipleLocator(1))
-axs.yaxis.set_major_locator(MultipleLocator(0.5))
-axs.xaxis.set_minor_locator(AutoMinorLocator(1))
-axs.yaxis.set_minor_locator(AutoMinorLocator(1))
+axs.set_xlabel('Image size')
+axs.set_ylabel('Single classifying time (s)')
+#axs.set_title('Single Classifying time for the KNN on server environment')
+axs.plot(knn['Target size'][0:4], knn['Single classifying time (s)'][0:4], marker='o', markersize=9, label='Edge')
+axs.plot(knn['Target size'][4:], knn['Single classifying time (s)'][4:], marker='D', markersize=9, label='Server')
+# axs.xaxis.set_major_locator(MultipleLocator(1))
+# axs.yaxis.set_major_locator(MultipleLocator(0.5))
+# axs.xaxis.set_minor_locator(AutoMinorLocator(1))
+# axs.yaxis.set_minor_locator(AutoMinorLocator(1))
 axs.grid(which='major', linestyle='--')
 axs.grid(which='minor', linestyle=':')
-
+axs.legend()
 
 
 plt.tight_layout()

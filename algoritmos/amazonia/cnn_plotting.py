@@ -40,9 +40,9 @@ plt.rcParams['ytick.right'] = plt.rcParams['ytick.labelright'] = False
 
 
 fig0, axs = plt.subplots()
-axs.set_xlabel('Avg Recall')
-axs.set_ylabel('Avg Precision')
-axs.set_title('Precision and Recall as Function of Image Size for CNN')
+axs.set_xlabel('Recall')
+axs.set_ylabel('Precision')
+#axs.set_title('Precision and Recall as Function of Image Size for CNN')
 
 # Threshold X Image Size
 for k in range(len(sizes)):
@@ -85,8 +85,8 @@ axs.legend(title='Image size')
 # Accuracy versus threshold
 fig1, axs = plt.subplots()
 axs.set_xlabel('Threshold')
-axs.set_ylabel('Avg Accuracy')
-axs.set_title('Accuracy as Function of Threshold for CNN')
+axs.set_ylabel('Accuracy')
+#axs.set_title('Accuracy as Function of Threshold for CNN')
 
 for j in range(len(sizes)):
     axs.plot(cnn[cnn['Target size']==sizes[j]]['Threshold'],
@@ -104,9 +104,9 @@ axs.legend(title='Image size', loc=4)
 
 
 fig2, axs = plt.subplots()
-axs.set_xlabel('Avg Recall')
-axs.set_ylabel('Avg Precision')
-axs.set_title('Precision and Recall as Function of Threshold for CNN')
+axs.set_xlabel('Recall')
+axs.set_ylabel('Precision')
+#axs.set_title('Precision and Recall as Function of Threshold for CNN')
 
 for h in range(len(thresholds)):
     axs.plot(cnn[cnn['Threshold']==thresholds[h]]['Avg Recall'],

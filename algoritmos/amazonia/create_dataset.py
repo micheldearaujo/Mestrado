@@ -75,7 +75,7 @@ def one_hot_enconde(tags, mapping):
     return enconding
 
 
-# Criando uma função para carregar as imagens
+# Creating a function to transform the images into a arrays
 def load_dataset(path, file_mapping, tag_mapping,targ_size):
     pics, targets = list(), list()
     # Vai percorrer todas as imagens no diretório
